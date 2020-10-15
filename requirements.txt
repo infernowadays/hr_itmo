@@ -1,4 +1,4 @@
-asgiref~=3.2.10
+asgiref==3.2.10
 bcrypt==3.2.0
 cffi==1.14.3
 dj-database-url==0.5.0
@@ -8,6 +8,7 @@ Pillow==8.0.0
 psycopg2==2.8.6
 pycparser==2.20
 PyJWT==1.7.1
+python-decouple==3.3
 pytz==2020.1
 six==1.15.0
 sqlparse==0.4.1
