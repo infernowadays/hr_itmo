@@ -7,7 +7,7 @@ from django.db import models
 
 
 class UserProfileManager(BaseUserManager):
-    def create_user(self, email, first_name, last_name, password=None):
+    def create_user(self, email, first_name, last_name, university_id, student_id_type, student_id, type, date_of_birth, sex, password=None):
         if not email:
             raise ValueError("set email")
         if not first_name or not last_name:
@@ -16,7 +16,13 @@ class UserProfileManager(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             first_name=first_name,
-            last_name=last_name
+            last_name=last_name,
+            university_id=university_id,
+            student_id_type=student_id_type,
+            student_id=student_id,
+            type=type,
+            date_of_birth=date_of_birth,
+            sex=sex
         )
 
         user.set_password(password)
@@ -27,7 +33,13 @@ class UserProfileManager(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             first_name=first_name,
-            last_name=last_name
+            last_name=last_name,
+            university_id=university_id,
+            student_id_type=student_id_type,
+            student_id=student_id,
+            type=type,
+            date_of_birth=date_of_birth,
+            sex=sex
         )
 
         user.set_password(password)
@@ -49,7 +61,6 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     type = models.CharField(max_length=64, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     sex = models.BooleanField(default=False)
-    vk_token = models.TextField(null=True, blank=True, max_length=128)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
