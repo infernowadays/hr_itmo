@@ -19,7 +19,13 @@ class SignUpView(APIView):
         serializer = UserProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            user = authenticate(email=request.data.get('email'), password=request.data.get('password'))
+            if not user:
+                raise Http404
+            token, _ = Token.objects.get_or_create(user=user)
+
+            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
