@@ -1,1 +1,1 @@
-web: waitress-serve --port=8080 hr.wsgi:application
+web: waitress-serve --port=8080 hr.hr.wsgi:application
