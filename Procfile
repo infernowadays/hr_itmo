@@ -1,1 +1,1 @@
-web: gunicorn hr.wsgi --log-file -
+web: waitress-serve --port=8080 hr.wsgi:application
