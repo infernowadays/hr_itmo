@@ -13,7 +13,8 @@ class UniversityListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        serializer = UniversitySerializer(many=True)
+        universities = University.objects.all()
+        serializer = UniversitySerializer(universities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -22,5 +23,6 @@ class SpecializationListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        serializer = SpecializationSerializer(many=True)
+        specializations = Specialization.objects.all()
+        serializer = SpecializationSerializer(specializations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
