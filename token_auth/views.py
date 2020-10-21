@@ -25,7 +25,11 @@ class SignUpView(APIView):
                 raise Http404
             token, _ = Token.objects.get_or_create(user=user)
 
-            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+            response = dict({})
+            response['token'] = token.key
+            response['type'] = request.data.get('type')
+
+            return Response(response, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
