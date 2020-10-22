@@ -53,4 +53,4 @@ class LoginView(APIView):
         response['token'] = token.key
         response['type'] = UserProfile.objects.get(email=email).type
 
-        return Response(response, status=status.HTTP_201_CREATED)
+        return Response(response, status=status.HTTP_200_OK)
