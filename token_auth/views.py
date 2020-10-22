@@ -10,6 +10,7 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 from .serializers import *
+from .models import UserProfile
 
 
 class SignUpView(APIView):
@@ -48,4 +49,8 @@ class LoginView(APIView):
             raise Http404
         token, _ = Token.objects.get_or_create(user=user)
 
-        return Response({'token': token.key})
+        response = dict({})
+        response['token'] = token.key
+        response['type'] = UserProfile.objects.get(email=email).type
+
+        return Response(response, status=status.HTTP_201_CREATED)
