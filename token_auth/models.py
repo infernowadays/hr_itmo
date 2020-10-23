@@ -10,8 +10,7 @@ from .enums import *
 class UserProfileManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, university_id, student_id_type, student_id, type, date_of_birth,
                     sex, specialization, degree, course, password):
-        if not email or not first_name or not last_name or not university_id or not student_id_type or not student_id \
-                or not type or not date_of_birth or not sex or not specialization or not degree or not course:
+        if not email or not first_name or not last_name or not type or not date_of_birth or not sex:
             raise ValueError("Provide all the data")
 
         user = self.model(
