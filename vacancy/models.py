@@ -2,6 +2,7 @@ from django.db import models
 from .enums import *
 from company.models import Company
 from token_auth.models import UserProfile
+from core.models import Specialization
 
 
 class Skill(models.Model):
@@ -25,6 +26,7 @@ class Vacancy(models.Model):
 
     skills = models.ManyToManyField(Skill, through='VacancySkills')
     min_points = models.IntegerField(null=False, blank=True)
+    specializations = models.ManyToManyField(Specialization, through='VacancySpecializations')
     company = models.ForeignKey(Company, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='vacancies')
 
@@ -39,6 +41,15 @@ class VacancySkills(models.Model):
     class Meta:
         db_table = 'vacancy_skills'
         unique_together = ['vacancy', 'skill']
+
+
+class VacancySpecializations(models.Model):
+    vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, null=False)
+    specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        db_table = 'vacancy_specializations'
+        unique_together = ['vacancy', 'specialization']
 
 
 class Request(models.Model):

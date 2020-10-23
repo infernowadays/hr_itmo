@@ -5,6 +5,7 @@ from rest_framework import serializers
 from .models import *
 from company.serializers import CompanySerializer
 from token_auth.serializers import UserProfileSerializer
+from core.serializers import SpecializationSerializer
 
 
 class SkillSerializer(ModelSerializer):
@@ -16,6 +17,7 @@ class SkillSerializer(ModelSerializer):
 class VacancySerializer(ModelSerializer):
     company = CompanySerializer(read_only=True)
     skills = SkillSerializer(many=True, read_only=True, required=False)
+    specializations = SpecializationSerializer(read_only=True, many=True)
 
     class Meta:
         model = Vacancy
@@ -23,6 +25,7 @@ class VacancySerializer(ModelSerializer):
 
     def create(self, validated_data):
         skills = validated_data.pop('skills')
+        specializations = validated_data.pop('specializations')
 
         vacancy = Vacancy.objects.create(**validated_data)
 
@@ -36,6 +39,10 @@ class VacancySerializer(ModelSerializer):
                     skill = skill.get()
 
                 VacancySkills.objects.create(vacancy=vacancy, skill=skill)
+
+        if specializations is not None:
+            for specialization in specializations:
+                VacancySpecializations.objects.create(vacancy_id=vacancy.id, specialization_id=specialization)
 
         return vacancy
 

@@ -11,6 +11,9 @@ from rest_framework.views import APIView
 
 from .serializers import *
 from .models import UserProfile
+from .enums import Type
+from company.serializers import CompanySerializer
+from company.models import Company
 
 
 class SignUpView(APIView):
@@ -56,7 +59,15 @@ class LoginView(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
     def get(self, request):
-        serializer = UserProfileSerializer(self.request.user)
+        serializer = None
+
+        if self.request.user.type == Type.EMPLOYER.value:
+            company = Company.objects.filter(hr=self.request.user)[0]
+            serializer = CompanySerializer(company)
+
+        elif self.request.user.type == Type.STUDENT.value:
+            serializer = UserProfileSerializer(self.request.user)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

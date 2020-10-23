@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'token_auth',
     'vacancy',
     'company',
+    'form',
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

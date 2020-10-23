@@ -26,13 +26,19 @@ class VacancyListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        # Specialization.objects.create(code='243', name='ewrthyt', qualification='ewthryt')
+        # Specialization.objects.create(code='243', name='hjy', qualification='ewthryt')
+        # Specialization.objects.create(code='243', name='4354', qualification='ewthryt')
+        # Specialization.objects.create(code='243', name='ge', qualification='ewthryt')
+
         serializer = VacancySerializer(data=request.data)
         if serializer.is_valid():
             company = Company.objects.get(hr=self.request.user)
             if not company:
                 return Response({'error': 'user does not belong to any company'}, status=status.HTTP_404_NOT_FOUND)
 
-            serializer.save(company=company, skills=request.data.get('skills'))
+            serializer.save(company=company, skills=request.data.get('skills'),
+                            specializations=request.data.get('specializations'))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
