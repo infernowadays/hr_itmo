@@ -21,6 +21,8 @@ class Vacancy(models.Model):
     schedule_type = models.IntegerField(null=False, blank=True)
     employment_type = models.IntegerField(null=False, blank=True)
 
+    approved = models.BooleanField(null=False, blank=False, default=False)
+
     skills = models.ManyToManyField(Skill, through='VacancySkills')
     min_points = models.IntegerField(null=False, blank=True)
     company = models.ForeignKey(Company, null=False, db_constraint=True, on_delete=models.CASCADE,
