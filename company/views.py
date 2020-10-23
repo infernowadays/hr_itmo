@@ -22,6 +22,8 @@ class CompanyListView(APIView):
     def post(self, request):
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
+            if self.request.user.type != Type.EMPLOYER.value:
+                return Response({'error': 'student can not create companies'}, status=status.HTTP_406_NOT_ACCEPTABLE)
             serializer.save(hr=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
