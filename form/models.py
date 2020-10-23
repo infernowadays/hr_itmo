@@ -27,10 +27,19 @@ class Job(models.Model):
     started = models.CharField(max_length=16, null=False, blank=False)
     ended = models.CharField(max_length=16, null=False, blank=False)
     name = models.CharField(max_length=128, null=False, blank=False)
-    duties = models.ForeignKey(Duty, null=False, db_constraint=True, on_delete=models.CASCADE)
+    duties = models.ManyToManyField(Duty, through='JobDuties')
 
     class Meta:
         db_table = 'job'
+
+
+class JobDuties(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, null=False)
+    duty = models.ForeignKey(Duty, on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        db_table = 'job_duties'
+        unique_together = ['job', 'duty']
 
 
 class ExtraSkill(models.Model):

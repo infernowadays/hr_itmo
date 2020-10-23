@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 from .models import *
+from core.models import University
 
 
 class FormListView(APIView):
@@ -22,7 +23,7 @@ class FormListView(APIView):
     def post(self, request):
         serializer = FormSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(student=self.request.user)
+            serializer.save(student=self.request.user, educations=self.request.data.get('educations'))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
