@@ -54,3 +54,24 @@ class LoginView(APIView):
         response['type'] = UserProfile.objects.get(email=email).type
 
         return Response(response, status=status.HTTP_200_OK)
+
+    def get(self, request):
+        serializer = UserProfileSerializer(self.request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProfileDetailView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    @staticmethod
+    def get_object(pk):
+        try:
+            return UserProfile.objects.get(pk=pk)
+        except UserProfile.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        user_profile = self.get_object(pk)
+        serializer = UserProfileSerializer(user_profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)

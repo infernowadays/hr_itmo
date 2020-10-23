@@ -9,6 +9,8 @@ from .models import *
 from .serializers import *
 from .constants import *
 from company.models import Company
+from .utils import filter_by_skills, setup_vacancy_display
+from django.db.models import Q
 
 
 class VacancyListView(APIView):
@@ -16,21 +18,12 @@ class VacancyListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        vacancies = Vacancy.objects.all()
+        q = Q() | filter_by_skills(request.GET.getlist('skill'))
+        vacancies = Vacancy.objects.filter(q).distinct().order_by('id')
         serializer = VacancySerializer(vacancies, many=True)
+        setup_vacancy_display(serializer.data)
 
-        serializer_data = serializer.data
-        for vacancy in serializer.data:
-            vacancy['experience_type'] = {'id': vacancy.get('experience_type'),
-                                          'text': Constants().get_employment_types(vacancy.get('experience_type'))}
-
-            vacancy['employment_type'] = {'id': vacancy.get('employment_type'),
-                                          'text': Constants().get_experience_types(vacancy.get('employment_type'))}
-
-            vacancy['schedule_type'] = {'id': vacancy.get('schedule_type'),
-                                        'text': Constants().get_schedule_types(vacancy.get('schedule_type'))}
-
-        return Response(serializer_data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = VacancySerializer(data=request.data)
@@ -46,6 +39,23 @@ class VacancyListView(APIView):
     def delete(self, request):
         Vacancy.objects.all().delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class VacancyDetailView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    @staticmethod
+    def get_object(pk):
+        try:
+            return Vacancy.objects.get(pk=pk)
+        except Vacancy.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        vacancy = self.get_object(pk)
+        serializer = VacancySerializer(vacancy)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SkillListView(APIView):
