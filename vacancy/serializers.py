@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from .models import *
 from company.serializers import CompanySerializer
+from token_auth.serializers import UserProfileSerializer
 
 
 class SkillSerializer(ModelSerializer):
@@ -37,3 +38,13 @@ class VacancySerializer(ModelSerializer):
                 VacancySkills.objects.create(vacancy=vacancy, skill=skill)
 
         return vacancy
+
+
+class RequestSerializer(ModelSerializer):
+    user = UserProfileSerializer(read_only=True)
+    vacancy = serializers.IntegerField(source='vacancy.id', read_only=True)
+
+    class Meta:
+        model = Request
+        fields = '__all__'
+        extra_kwargs = {'decision': {'required': False}}

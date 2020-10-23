@@ -1,5 +1,6 @@
 from django.db import models
 from token_auth.models import UserProfile
+from core.models import City
 
 
 class Company(models.Model):
@@ -7,7 +8,10 @@ class Company(models.Model):
     description = models.TextField(null=False, blank=True)
     inn = models.CharField(max_length=32, null=False, blank=True)
     ogrn = models.CharField(max_length=32, null=False, blank=True)
-    city = models.CharField(max_length=128, null=False, blank=True)
+
+    city = models.ForeignKey(City, null=False, db_constraint=True, on_delete=models.CASCADE,
+                             related_name='companies')
+
     address = models.CharField(max_length=256, null=False, blank=True)
     email = models.EmailField(null=False, blank=True)
     phone = models.CharField(max_length=32, null=False, blank=True)

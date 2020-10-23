@@ -15,3 +15,10 @@ class Specialization(models.Model):
 
     class Meta:
         db_table = 'specialization'
+
+
+class City(models.Model):
+    name = models.CharField(max_length=128, null=False, blank=False)
+
+    class Meta:
+        db_table = 'city'

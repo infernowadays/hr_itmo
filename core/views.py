@@ -23,3 +23,12 @@ class SpecializationListView(APIView):
         specializations = Specialization.objects.all()
         serializer = SpecializationSerializer(specializations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CityListView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        cities = City.objects.all()
+        serializer = CitySerializer(cities, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import University, Specialization
+from .models import University, Specialization, City
 
 
 class UniversitySerializer(ModelSerializer):
@@ -11,4 +11,10 @@ class UniversitySerializer(ModelSerializer):
 class SpecializationSerializer(ModelSerializer):
     class Meta:
         model = Specialization
+        fields = '__all__'
+
+
+class CitySerializer(ModelSerializer):
+    class Meta:
+        model = City
         fields = '__all__'
