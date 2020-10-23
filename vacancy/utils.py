@@ -1,12 +1,21 @@
 from django.db.models import Q
 from vacancy.models import Skill
 from .constants import *
+from core.models import Specialization
 
 
 def filter_by_skills(list_skills):
     if list_skills:
         skills = Skill.objects.filter(id__in=list_skills).values_list('id', flat=True)
         return Q(skills__in=skills)
+    else:
+        return Q()
+
+
+def filter_by_specializations(list_specializations):
+    if list_specializations:
+        specializations = Specialization.objects.filter(id__in=list_specializations).values_list('id', flat=True)
+        return Q(specializations__in=specializations)
     else:
         return Q()
 
