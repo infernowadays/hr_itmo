@@ -26,6 +26,10 @@ class CompanyListView(APIView):
             if self.request.user.type != Type.EMPLOYER.value:
                 return Response({'error': 'student can not create companies'}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+            if Company.objects.filter(hr=self.request.user) is not None:
+                return Response({'error': 'user can not create more than one company'},
+                                status=status.HTTP_406_NOT_ACCEPTABLE)
+
             city = City.objects.filter(id=request.data.get('city'))
             if not city:
                 return Response({'error': 'city does not exists'}, status=status.HTTP_404_NOT_FOUND)
