@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'core',
     'token_auth',
+    'vacancy',
+    'company',
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
