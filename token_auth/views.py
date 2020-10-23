@@ -65,7 +65,7 @@ class LoginView(APIView):
             company = Company.objects.filter(hr=self.request.user)
             if not company:
                 return Response({'error': 'user does not have any companies'}, status=status.HTTP_404_NOT_FOUND)
-            serializer = CompanySerializer(company)
+            serializer = CompanySerializer(company[0])
 
         elif self.request.user.type == Type.STUDENT.value:
             serializer = UserProfileSerializer(self.request.user)
