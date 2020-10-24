@@ -35,7 +35,7 @@ class VacancyListView(APIView):
                 return Response({'error': 'user does not belong to any company'}, status=status.HTTP_404_NOT_FOUND)
 
             serializer.save(company=company[0], skills=request.data.get('skills'),
-                            specializations=request.data.get('specializations'))
+                            specializations=request.data.get('specializations'), courses=request.data.get('courses'))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
