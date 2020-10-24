@@ -108,5 +108,4 @@ def get_super_job_vacancies(keywords, type_of_work, experience):
         instance = Vacancy(**vacancy)
         vacancies.append(instance)
 
-    print(response.json().get('objects'))
     return vacancies
