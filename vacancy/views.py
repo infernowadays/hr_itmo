@@ -11,6 +11,7 @@ from .constants import *
 from company.models import Company
 from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display
 from django.db.models import Q
+from token_auth.enums import Type
 
 
 class VacancyListView(APIView):
@@ -109,7 +110,15 @@ class RespondRequestView(APIView):
 
     def put(self, request, pk):
         request = self.get_object(pk)
-        serializer = RequestSerializer(request, data=request.data, partial=True)
+        serializer = RequestSerializer(request, data=self.request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, pk):
+        request = self.get_object(pk)
+        serializer = RequestSerializer(request, data={'seen': True}, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

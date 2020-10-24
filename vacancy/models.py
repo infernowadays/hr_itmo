@@ -76,6 +76,7 @@ class VacancyCourses(models.Model):
 class Request(models.Model):
     comment = models.TextField(null=True, blank=True)
     decision = models.CharField(max_length=16, choices=Decision.choices(), default=Decision.NO_ANSWER.value)
+    seen = models.BooleanField(null=False, blank=False, default=False)
     created = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
                              related_name='requests')
