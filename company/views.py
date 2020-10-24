@@ -9,6 +9,7 @@ from .serializers import *
 from company.models import Company
 from token_auth.enums import *
 from vacancy.serializers import VacancySerializer
+from vacancy.models import Vacancy
 
 
 class CompanyListView(APIView):
@@ -16,6 +17,12 @@ class CompanyListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
+        if self.request.user.type == Type.ADMINISTRATOR.value:
+            companies = CompanyShortSerializer(Company.objects.all(), many=True).data
+            for company in companies:
+                company['vacancies_count'] = Vacancy.objects.filter(company_id=company.get('id')).count()
+            return Response(companies, status=status.HTTP_200_OK)
+
         companies = Company.objects.all()
         serializer = CompanySerializer(companies, many=True)
 

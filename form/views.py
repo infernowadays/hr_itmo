@@ -34,6 +34,8 @@ class FormListView(APIView):
                             soft_skills=self.request.data.get('soft_skills'),
                             achievements=self.request.data.get('achievements'),
                             jobs=self.request.data.get('jobs'))
+
+            UserProfile.objects.filter(id=student.id).update(is_filled=True)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -71,7 +71,6 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     date_of_birth = models.DateField(null=False, blank=False)
     sex = models.CharField(max_length=16, choices=Sex.choices(), default=Sex.MALE.value, blank=False)
     course = models.IntegerField(blank=True, default=1)
-    # specialization = models.IntegerField(blank=True, default=1)
 
     specialization = models.ForeignKey(Specialization, null=False, db_constraint=True, on_delete=models.CASCADE)
 

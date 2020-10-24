@@ -94,6 +94,10 @@ class ProfileListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
+        if self.request.user.type == Type.ADMINISTRATOR.value:
+            return Response(UserProfileShortSerializer(UserProfile.objects.all(), many=True).data,
+                            status=status.HTTP_200_OK)
+
         students = UserProfile.objects.filter(type=Type.STUDENT.value)
         serializer = UserProfileSerializer(students, many=Type)
         return Response(serializer.data, status=status.HTTP_200_OK)

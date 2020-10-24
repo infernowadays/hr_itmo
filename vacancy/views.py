@@ -19,6 +19,9 @@ class VacancyListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
+        if self.request.user.type == Type.ADMINISTRATOR.value:
+            return Response(VacancyShortSerializer(Vacancy.objects.all(), many=True).data, status=status.HTTP_200_OK)
+
         '''
             experience
             1 — без опыта
@@ -194,7 +197,7 @@ class RequestListView(APIView):
                 response['company_name'] = company.name
                 responses.append(response)
         else:
-            return Response({'': ''}, status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response(RequestSerializer(Request.objects.all(), many=True).data, status=status.HTTP_200_OK)
 
         return Response(responses, status=status.HTTP_200_OK)
 

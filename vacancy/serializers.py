@@ -22,9 +22,13 @@ class CourseSerializer(ModelSerializer):
 
 
 class VacancyShortSerializer(ModelSerializer):
+    company_id = serializers.CharField(source='company.id')
+    company_name = serializers.CharField(source='company.name')
+
     class Meta:
         model = Vacancy
-        fields = ('id', 'short_description', 'description', 'name', )
+        fields = (
+            'id', 'short_description', 'description', 'name', 'company_id', 'company_name', 'is_active', 'approved',)
 
 
 class VacancySerializer(ModelSerializer):

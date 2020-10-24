@@ -14,3 +14,12 @@ class CompanySerializer(ModelSerializer):
     class Meta:
         model = Company
         fields = '__all__'
+
+
+class CompanyShortSerializer(ModelSerializer):
+    hr_first_name = serializers.CharField(source='hr.first_name')
+    hr_last_name = serializers.CharField(source='hr.last_name')
+
+    class Meta:
+        model = Company
+        fields = ('id', 'name', 'hr_first_name', 'hr_last_name',)

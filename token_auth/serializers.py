@@ -41,6 +41,12 @@ class UserProfileSerializer(ModelSerializer):
         return profile
 
 
+class UserProfileShortSerializer(ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ('id', 'first_name', 'last_name', 'is_filled',)
+
+
 class AuthCredentialsSerializers(Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True)
