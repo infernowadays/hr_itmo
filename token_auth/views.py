@@ -14,6 +14,9 @@ from .models import UserProfile
 from .enums import Type
 from company.serializers import CompanySerializer
 from company.models import Company
+from form.models import Form
+import json
+from form.serializers import FormSerializer
 
 
 class SignUpView(APIView):
@@ -76,7 +79,14 @@ class LoginView(APIView):
         elif self.request.user.type == Type.STUDENT.value:
             serializer = UserProfileSerializer(self.request.user)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer_data = serializer.data
+        form = Form.objects.filter(student=self.request.user)[0]
+        if not form:
+            serializer_data['form'] = None
+        else:
+            serializer_data['form'] = FormSerializer(form).data
+
+        return Response(serializer_data, status=status.HTTP_200_OK)
 
 
 class ProfileDetailView(APIView):
