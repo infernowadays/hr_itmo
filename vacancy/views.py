@@ -12,6 +12,7 @@ from company.models import Company
 from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display
 from django.db.models import Q
 from token_auth.enums import Type
+import json
 
 
 class VacancyListView(APIView):
@@ -21,6 +22,9 @@ class VacancyListView(APIView):
     def get(self, request):
         q = Q() | filter_by_skills(request.GET.getlist('skill'))
         q = q & filter_by_specializations(request.GET.getlist('spec'))
+
+        company = Company.objects.filter(hr=self.request.user)[0]
+        q = q & Q(company=company)
 
         vacancies = Vacancy.objects.filter(q).distinct().order_by('id')
         serializer = VacancySerializer(vacancies, many=True)
@@ -109,16 +113,44 @@ class RequestListView(APIView):
 
     def get(self, request):
         if self.request.user.type == Type.EMPLOYER.value:
-            company = Company.objects.get(hr=self.request.user)
-            vacancies_ids = company.vacancies.values_list('id', flat=True)
-            requests = Request.objects.filter(vacancy__in=vacancies_ids).order_by('created')
+            company = Company.objects.filter(hr=self.request.user)[0]
+            vacancies = VacancyShortSerializer(instance=company.vacancies, many=True)
+            for vacancy in vacancies.data:
+                responses = list([])
+
+                for request in Request.objects.filter(vacancy_id=vacancy.get('id')):
+                    response = dict({})
+                    response['response_id'] = request.id
+                    response['student_id'] = request.user.id
+                    response['student_name'] = request.user.first_name + ' ' + request.user.last_name
+                    responses.append(response)
+
+                vacancy['responses'] = responses
+
+            responses = vacancies.data
+
         elif self.request.user.type == Type.STUDENT.value:
-            requests = Request.objects.filter(user=self.request.user).order_by('created')
+            responses = list([])
+
+            for request in Request.objects.filter(user=self.request.user):
+                vacancy = Vacancy.objects.get(id=request.vacancy.id)
+                company = Company.objects.get(id=vacancy.company.id)
+
+                response = dict({})
+                response['vacancy_id'] = vacancy.id
+                response['vacancy_description'] = vacancy.description
+                response['vacancy_short_description'] = vacancy.short_description
+                response['response_id'] = request.id
+                response['response_decision'] = request.decision
+                response['response_seen'] = request.seen
+                response['company_id'] = company.id
+                response['company_logo'] = company.logo
+                response['company_name'] = company.name
+                responses.append(response)
         else:
             return Response({'': ''}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        serializer = RequestSerializer(instance=requests, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(responses, status=status.HTTP_200_OK)
 
 
 class RespondRequestView(APIView):

@@ -21,6 +21,12 @@ class CourseSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class VacancyShortSerializer(ModelSerializer):
+    class Meta:
+        model = Vacancy
+        fields = ('id', 'short_description', 'description',)
+
+
 class VacancySerializer(ModelSerializer):
     company = CompanySerializer(read_only=True)
     skills = SkillSerializer(many=True, read_only=True, required=False)
