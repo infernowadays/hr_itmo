@@ -23,18 +23,20 @@ class CompanyListView(APIView):
     def post(self, request):
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
-            if self.request.user.type != Type.EMPLOYER.value:
+            if self.request.user.type == Type.STUDENT.value:
                 return Response({'error': 'student can not create companies'}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-            if Company.objects.filter(hr=self.request.user):
-                return Response({'error': 'user can not create more than one company'},
-                                status=status.HTTP_406_NOT_ACCEPTABLE)
+            elif self.request.user.type == Type.EMPLOYER.value or self.request.user.type == Type.ADMINISTRATOR.value:
+                if Company.objects.filter(hr=self.request.user) and self.request.user.type == Type.EMPLOYER.value:
+                    return Response({'error': 'user can not create more than one company'},
+                                    status=status.HTTP_406_NOT_ACCEPTABLE)
 
-            city = City.objects.filter(id=request.data.get('city'))
-            if not city:
-                return Response({'error': 'city does not exists'}, status=status.HTTP_404_NOT_FOUND)
+                city = City.objects.filter(id=request.data.get('city'))
+                if not city:
+                    return Response({'error': 'city does not exists'}, status=status.HTTP_404_NOT_FOUND)
 
-            serializer.save(hr=self.request.user, city=city[0])
+                serializer.save(hr=self.request.user, city=city[0])
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

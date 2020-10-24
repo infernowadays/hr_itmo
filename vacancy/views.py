@@ -35,7 +35,15 @@ class VacancyListView(APIView):
     def post(self, request):
         serializer = VacancySerializer(data=request.data)
         if serializer.is_valid():
-            company = Company.objects.filter(hr=self.request.user)
+            if request.GET.get('company') and self.request.user.type == Type.ADMINISTRATOR.value:
+                company = Company.objects.filter(pk=request.GET.get('company'))
+            elif self.request.user.type == Type.STUDENT.value:
+                return Response({'error': 'student can not create a company'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+            elif self.request.user.type == Type.EMPLOYER.value:
+                company = Company.objects.filter(hr=self.request.user)
+            else:
+                return Response({'error': 'provide company id'}, status=status.HTTP_400_BAD_REQUEST)
+
             if not company:
                 return Response({'error': 'user does not belong to any company'}, status=status.HTTP_404_NOT_FOUND)
 
