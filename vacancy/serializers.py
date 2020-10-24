@@ -53,6 +53,15 @@ class VacancySerializer(ModelSerializer):
         return vacancy
 
 
+class FavouriteVacancySerializer(ModelSerializer):
+    vacancy = VacancySerializer(read_only=True)
+    user = UserProfileSerializer(read_only=True)
+
+    class Meta:
+        model = VacancyFavorites
+        fields = '__all__'
+
+
 class RequestSerializer(ModelSerializer):
     user = UserProfileSerializer(read_only=True)
     vacancy = serializers.IntegerField(source='vacancy.id', read_only=True)

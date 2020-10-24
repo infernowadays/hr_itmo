@@ -73,6 +73,15 @@ class VacancyCourses(models.Model):
         unique_together = ['vacancy', 'course']
 
 
+class VacancyFavorites(models.Model):
+    vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        db_table = 'vacancy_favorites'
+        unique_together = ['vacancy', 'user']
+
+
 class Request(models.Model):
     comment = models.TextField(null=True, blank=True)
     decision = models.CharField(max_length=16, choices=Decision.choices(), default=Decision.NO_ANSWER.value)

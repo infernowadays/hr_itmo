@@ -45,6 +45,29 @@ class VacancyListView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+class FavouriteVacancyListView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request):
+        favourites = VacancyFavorites.objects.filter(user=self.request.user)
+        serializer = FavouriteVacancySerializer(favourites, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = FavouriteVacancySerializer(data=self.request.data)
+        if serializer.is_valid():
+            vacancy = Vacancy.objects.get(pk=self.request.data.get('vacancy'))
+            serializer.save(user=self.request.user, vacancy=vacancy)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        Vacancy.objects.all().delete()
+        return Response(status=status.HTTP_200_OK)
+
+
 class VacancyDetailView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
