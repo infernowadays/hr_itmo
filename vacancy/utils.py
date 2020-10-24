@@ -63,7 +63,7 @@ class ListAsQuerySet(list):
         return self
 
 
-def get_super_job_vacancies(old, keywords, type_of_work, experience):
+def get_super_job_vacancies(keywords, type_of_work, experience):
     app_url = 'https://api.superjob.ru/2.20/vacancies/'
     period = 0
     town = 'Ставрополь'
@@ -105,12 +105,8 @@ def get_super_job_vacancies(old, keywords, type_of_work, experience):
         company = Company(**company_json)
         vacancy['company'] = company
 
-        # data = json.loads(vacancy)
-
         instance = Vacancy(**vacancy)
-        # old = old | instance
-
-        # old |= Vacancy.objects.filter(pk=instance.pk)
         vacancies.append(instance)
 
+    print(response.json().get('objects'))
     return vacancies
