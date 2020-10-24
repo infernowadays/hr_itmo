@@ -113,4 +113,11 @@ class ProfileDetailView(APIView):
     def get(self, request, pk):
         user_profile = self.get_object(pk)
         serializer = UserProfileSerializer(user_profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer_data = serializer.data
+
+        form = Form.objects.filter(student=self.request.user)
+        if not form:
+            serializer_data['form'] = {}
+        else:
+            serializer_data['form'] = FormSerializer(instance=form[0]).data
+        return Response(serializer_data, status=status.HTTP_200_OK)

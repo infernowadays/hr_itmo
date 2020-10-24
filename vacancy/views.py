@@ -19,28 +19,27 @@ class VacancyListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        # '''
-        #     experience
-        #     1 — без опыта
-        #     2 — от 1 года
-        #     3 — от 3 лет
-        #     4 — от 6 лет
-        # '''
-        # experience = 1
-        #
-        # '''
-        #     type_of_work
-        #     6 — полный день
-        #     10 — неполный день
-        #     12 — сменный график
-        #     7 — временная работа
-        #     9 — вахтовым методом
-        # '''
-        # type_of_work = 6
-        #
-        # keywords = 'android developer'
-        #
-        # get_super_job_vacancies(keywords, type_of_work, experience)
+        '''
+            experience
+            1 — без опыта
+            2 — от 1 года
+            3 — от 3 лет
+            4 — от 6 лет
+        '''
+        experience = 1
+
+        '''
+            type_of_work
+            6 — полный день
+            10 — неполный день
+            12 — сменный график
+            7 — временная работа
+            9 — вахтовым методом
+        '''
+        type_of_work = 6
+
+        keywords = 'android developer'
+
 
         q = Q() | filter_by_skills(request.GET.getlist('skill'))
         q = q & filter_by_specializations(request.GET.getlist('spec'))
@@ -49,18 +48,22 @@ class VacancyListView(APIView):
             company = Company.objects.filter(pk=request.GET.get('company'))
 
         else:
-            if self.request.user.type == Type.STUDENT.value:
-                company = {}
-
-            else:
-                company = Company.objects.filter(hr=self.request.user)
+            company = {}
 
         if company:
             q = q & Q(company=company[0])
 
         vacancies = Vacancy.objects.filter(q).distinct().order_by('id')
         serializer = VacancySerializer(vacancies, many=True)
+
+
+        # get_super_job_vacancies(keywords, type_of_work, experience)
+
+
+
         setup_vacancy_display(serializer.data)
+
+
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
