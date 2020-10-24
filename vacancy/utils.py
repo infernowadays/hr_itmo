@@ -3,6 +3,8 @@ from vacancy.models import Skill
 from .constants import *
 from core.models import Specialization
 from .models import VacancySkills
+import requests
+from django.conf import settings
 
 
 def filter_by_skills(list_skills):
@@ -43,3 +45,18 @@ def create_skills(skills, vacancy):
             skill = skill.get()
 
         VacancySkills.objects.create(vacancy=vacancy, skill=skill)
+
+
+def get_super_job_vacancies(keywords, type_of_work, experience, ):
+    app_url = 'https://api.superjob.ru/2.20/vacancies/'
+    period = 0
+    town = 'Ставрополь'
+    order_field = 'date'
+    order_direction = 'desc'
+    count = 20
+
+    headers = {'Content-Type': 'application/json', 'X-Api-App-Id': settings.SUPER_JOB_SECRET_KEY}
+    payload = {'period': period, 'town': town, 'order_field': order_field, 'order_direction': order_direction,
+               'count': count, 'keywords': keywords, 'type_of_work': type_of_work, 'experience': experience}
+
+    response = requests.get(app_url, headers=headers, params=payload)

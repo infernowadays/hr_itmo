@@ -24,7 +24,7 @@ class CourseSerializer(ModelSerializer):
 class VacancyShortSerializer(ModelSerializer):
     class Meta:
         model = Vacancy
-        fields = ('id', 'short_description', 'description',)
+        fields = ('id', 'short_description', 'description', 'name', )
 
 
 class VacancySerializer(ModelSerializer):

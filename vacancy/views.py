@@ -9,10 +9,9 @@ from .models import *
 from .serializers import *
 from .constants import *
 from company.models import Company
-from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display
+from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display, get_super_job_vacancies
 from django.db.models import Q
 from token_auth.enums import Type
-import json
 
 
 class VacancyListView(APIView):
@@ -142,7 +141,7 @@ class RequestListView(APIView):
 
                 for request in Request.objects.filter(vacancy_id=vacancy.get('id')):
                     response = dict({})
-                    response['company_name'] = company.name
+                    response['vacancy_name'] = vacancy.get('name')
                     response['response_id'] = request.id
                     response['student_id'] = request.user.id
                     response['student_name'] = request.user.first_name + ' ' + request.user.last_name
@@ -161,6 +160,7 @@ class RequestListView(APIView):
 
                 response = dict({})
                 response['vacancy_id'] = vacancy.id
+                response['vacancy_name'] = vacancy.name
                 response['vacancy_description'] = vacancy.description
                 response['vacancy_short_description'] = vacancy.short_description
                 response['response_id'] = request.id

@@ -89,6 +89,16 @@ class LoginView(APIView):
         return Response(serializer_data, status=status.HTTP_200_OK)
 
 
+class ProfileListView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request):
+        students = UserProfile.objects.filter(type=Type.STUDENT.value)
+        serializer = UserProfileSerializer(students, many=Type)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ProfileDetailView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
