@@ -90,9 +90,9 @@ class FormSerializer(ModelSerializer):
             FormJobs.objects.create(form=form, job=job)
 
         for extra_skill in extra_skills:
-            extra_skill = ExtraSkill.objects.filter(text=extra_skill.get('text'))
+            extra_skill_obj = ExtraSkill.objects.filter(text=extra_skill.get('text'))
 
-            if not extra_skill:
+            if not extra_skill_obj:
                 extra_skill = ExtraSkill.objects.create(id=extra_skill.get('id'), text=extra_skill.get('text'))
             else:
                 extra_skill = extra_skill.get()
