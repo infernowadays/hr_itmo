@@ -44,7 +44,7 @@ class UserProfileSerializer(ModelSerializer):
 class UserProfileShortSerializer(ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('id', 'first_name', 'last_name', 'is_filled',)
+        fields = ('id', 'first_name', 'last_name', 'is_filled', 'type',)
 
 
 class AuthCredentialsSerializers(Serializer):
