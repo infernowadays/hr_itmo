@@ -3,6 +3,8 @@ from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 
 from .models import UserProfile
+from core.serializers import SpecializationSerializer
+from core.models import Specialization
 
 
 class TokenSerializer(ModelSerializer):
@@ -14,12 +16,15 @@ class TokenSerializer(ModelSerializer):
 
 
 class UserProfileSerializer(ModelSerializer):
+    specialization = SpecializationSerializer(read_only=True)
+
     class Meta:
         model = UserProfile
         fields = '__all__'
 
     def create(self, validated_data):
-        profile = UserProfile.objects.create_user(**validated_data)
+        specialization = Specialization.objects.get(pk=validated_data.pop('specialization'))
+        profile = UserProfile.objects.create_user(**validated_data, specialization=specialization)
         return profile
 
     def to_representation(self, obj):
@@ -34,7 +39,6 @@ class UserProfileSerializer(ModelSerializer):
         profile.pop('groups')
 
         return profile
-
 
 
 class AuthCredentialsSerializers(Serializer):

@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.contrib.auth.models import User
 from django.db import models
 from .enums import *
+from core.models import Specialization
 
 
 class UserProfileManager(BaseUserManager):
@@ -70,7 +71,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     date_of_birth = models.DateField(null=False, blank=False)
     sex = models.CharField(max_length=16, choices=Sex.choices(), default=Sex.MALE.value, blank=False)
     course = models.IntegerField(blank=True, default=1)
-    specialization = models.IntegerField(blank=True, default=1)
+    # specialization = models.IntegerField(blank=True, default=1)
+
+    specialization = models.ForeignKey(Specialization, null=False, db_constraint=True, on_delete=models.CASCADE)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

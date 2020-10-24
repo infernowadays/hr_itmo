@@ -22,7 +22,7 @@ class SignUpView(APIView):
     def post(self, request):
         serializer = UserProfileSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(specialization=request.data.get('specialization'))
 
             user = authenticate(email=request.data.get('email'), password=request.data.get('password'))
             if not user:
