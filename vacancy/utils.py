@@ -47,7 +47,7 @@ def create_skills(skills, vacancy):
         VacancySkills.objects.create(vacancy=vacancy, skill=skill)
 
 
-def get_super_job_vacancies(keywords, type_of_work, experience, ):
+def get_super_job_vacancies(keywords, type_of_work, experience):
     app_url = 'https://api.superjob.ru/2.20/vacancies/'
     period = 0
     town = 'Ставрополь'
@@ -60,3 +60,4 @@ def get_super_job_vacancies(keywords, type_of_work, experience, ):
                'count': count, 'keywords': keywords, 'type_of_work': type_of_work, 'experience': experience}
 
     response = requests.get(app_url, headers=headers, params=payload)
+    return response

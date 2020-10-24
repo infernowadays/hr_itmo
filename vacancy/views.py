@@ -19,18 +19,45 @@ class VacancyListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
+        # '''
+        #     experience
+        #     1 — без опыта
+        #     2 — от 1 года
+        #     3 — от 3 лет
+        #     4 — от 6 лет
+        # '''
+        # experience = 1
+        #
+        # '''
+        #     type_of_work
+        #     6 — полный день
+        #     10 — неполный день
+        #     12 — сменный график
+        #     7 — временная работа
+        #     9 — вахтовым методом
+        # '''
+        # type_of_work = 6
+        #
+        # keywords = 'android developer'
+        #
+        # get_super_job_vacancies(keywords, type_of_work, experience)
+
         q = Q() | filter_by_skills(request.GET.getlist('skill'))
         q = q & filter_by_specializations(request.GET.getlist('spec'))
 
         if request.GET.get('company'):
             company = Company.objects.filter(pk=request.GET.get('company'))
+
         else:
-            company = Company.objects.filter(hr=self.request.user)
+            if self.request.user.type == Type.STUDENT.value:
+                company = {}
 
-        if not company:
-            return Response({'error': 'no company for such user'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                company = Company.objects.filter(hr=self.request.user)
 
-        q = q & Q(company=company[0])
+        if company:
+            q = q & Q(company=company[0])
+
         vacancies = Vacancy.objects.filter(q).distinct().order_by('id')
         serializer = VacancySerializer(vacancies, many=True)
         setup_vacancy_display(serializer.data)
