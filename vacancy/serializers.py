@@ -6,6 +6,7 @@ from .models import *
 from company.serializers import CompanySerializer
 from token_auth.serializers import UserProfileSerializer
 from core.serializers import SpecializationSerializer
+from .utils import create_skills
 
 
 class SkillSerializer(ModelSerializer):
@@ -38,15 +39,7 @@ class VacancySerializer(ModelSerializer):
         vacancy = Vacancy.objects.create(**validated_data)
 
         if skills is not None:
-            for string_skill in skills:
-                skill = Skill.objects.filter(text=string_skill.get('text'))
-
-                if not skill:
-                    skill = Skill.objects.create(id=string_skill.get('id'), text=string_skill.get('text'))
-                else:
-                    skill = skill.get()
-
-                VacancySkills.objects.create(vacancy=vacancy, skill=skill)
+            create_skills(skills, vacancy)
 
         if specializations is not None:
             for specialization in specializations:

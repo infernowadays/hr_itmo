@@ -2,6 +2,7 @@ from django.db.models import Q
 from vacancy.models import Skill
 from .constants import *
 from core.models import Specialization
+from .models import VacancySkills
 
 
 def filter_by_skills(list_skills):
@@ -30,3 +31,15 @@ def setup_vacancy_display(vacancies):
 
         vacancy['schedule_type'] = {'id': vacancy.get('schedule_type'),
                                     'text': Constants().get_schedule_types(vacancy.get('schedule_type'))}
+
+
+def create_skills(skills, vacancy):
+    for string_skill in skills:
+        skill = Skill.objects.filter(text=string_skill.get('text'))
+
+        if not skill:
+            skill = Skill.objects.create(id=string_skill.get('id'), text=string_skill.get('text'))
+        else:
+            skill = skill.get()
+
+        VacancySkills.objects.create(vacancy=vacancy, skill=skill)

@@ -17,7 +17,7 @@ class Education(models.Model):
 
 
 class Duty(models.Model):
-    description = models.TextField(null=False, blank=False)
+    text = models.TextField(null=False, blank=False)
 
     class Meta:
         db_table = 'duty'
@@ -39,25 +39,24 @@ class JobDuties(models.Model):
 
     class Meta:
         db_table = 'job_duties'
-        unique_together = ['job', 'duty']
 
 
 class ExtraSkill(models.Model):
-    description = models.TextField(null=False, blank=False)
+    text = models.TextField(null=False, blank=False)
 
     class Meta:
         db_table = 'extra_skill'
 
 
 class SoftSkill(models.Model):
-    description = models.TextField(null=False, blank=False)
+    text = models.TextField(null=False, blank=False)
 
     class Meta:
         db_table = 'soft_skill'
 
 
 class Achievement(models.Model):
-    description = models.TextField(null=False, blank=False)
+    text = models.TextField(null=False, blank=False)
 
     class Meta:
         db_table = 'achievement'
@@ -86,7 +85,6 @@ class FormEducations(models.Model):
 
     class Meta:
         db_table = 'form_educations'
-        unique_together = ['form', 'education']
 
 
 class FormJobs(models.Model):
@@ -95,7 +93,6 @@ class FormJobs(models.Model):
 
     class Meta:
         db_table = 'form_jobs'
-        unique_together = ['form', 'job']
 
 
 class FormExtraSkills(models.Model):
@@ -104,7 +101,6 @@ class FormExtraSkills(models.Model):
 
     class Meta:
         db_table = 'form_extra_skills'
-        unique_together = ['form', 'extra_skill']
 
 
 class FormSoftSkills(models.Model):
@@ -113,7 +109,6 @@ class FormSoftSkills(models.Model):
 
     class Meta:
         db_table = 'form_soft_skills'
-        unique_together = ['form', 'soft_skill']
 
 
 class FormAchievements(models.Model):
@@ -122,4 +117,3 @@ class FormAchievements(models.Model):
 
     class Meta:
         db_table = 'form_achievements'
-        unique_together = ['form', 'achievement']

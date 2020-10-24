@@ -23,7 +23,11 @@ class FormListView(APIView):
     def post(self, request):
         serializer = FormSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(student=self.request.user, educations=self.request.data.get('educations'))
+            serializer.save(student=self.request.user, educations=self.request.data.get('educations'),
+                            extra_skills=self.request.data.get('extra_skills'),
+                            soft_skills=request.data.get('soft_skills'),
+                            achievements=request.data.get('achievements'),
+                            jobs=request.data.get('jobs'))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
