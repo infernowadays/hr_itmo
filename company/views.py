@@ -43,3 +43,20 @@ class CompanyListView(APIView):
     def delete(self, request):
         Company.objects.all().delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class CompanyDetailView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    @staticmethod
+    def get_object(pk):
+        try:
+            return Company.objects.get(pk=pk)
+        except Company.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        company = self.get_object(pk)
+        serializer = CompanySerializer(company)
+        return Response(serializer.data, status=status.HTTP_200_OK)

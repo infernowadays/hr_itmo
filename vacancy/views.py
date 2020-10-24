@@ -142,6 +142,7 @@ class RequestListView(APIView):
 
                 for request in Request.objects.filter(vacancy_id=vacancy.get('id')):
                     response = dict({})
+                    response['company_name'] = company.name
                     response['response_id'] = request.id
                     response['student_id'] = request.user.id
                     response['student_name'] = request.user.first_name + ' ' + request.user.last_name
