@@ -87,7 +87,8 @@ class RequestListView(APIView):
     def get(self, request):
         if self.request.user.type == Type.EMPLOYER.value:
             company = Company.objects.get(hr=self.request.user)
-            requests = Request.objects.filter(company=company).order_by('created')
+            vacancies_ids = company.vacancies.values_list('id', flat=True)
+            requests = Request.objects.filter(vacancy__in=vacancies_ids).order_by('created')
         elif self.request.user.type == Type.STUDENT.value:
             requests = Request.objects.filter(user=self.request.user).order_by('created')
         else:
