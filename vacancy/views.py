@@ -23,9 +23,15 @@ class VacancyListView(APIView):
         q = Q() | filter_by_skills(request.GET.getlist('skill'))
         q = q & filter_by_specializations(request.GET.getlist('spec'))
 
-        company = Company.objects.filter(hr=self.request.user)[0]
-        q = q & Q(company=company)
+        if request.GET.get('company'):
+            company = Company.objects.filter(pk=request.GET.get('company'))
+        else:
+            company = Company.objects.filter(hr=self.request.user)
 
+        if not company:
+            return Response({'error': 'no company for such user'}, status=status.HTTP_400_BAD_REQUEST)
+
+        q = q & Q(company=company[0])
         vacancies = Vacancy.objects.filter(q).distinct().order_by('id')
         serializer = VacancySerializer(vacancies, many=True)
         setup_vacancy_display(serializer.data)
