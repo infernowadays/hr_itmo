@@ -38,8 +38,7 @@ class VacancyListView(APIView):
         '''
         type_of_work = 6
 
-        keywords = 'android developer'
-
+        keywords = 'программист'
 
         q = Q() | filter_by_skills(request.GET.getlist('skill'))
         q = q & filter_by_specializations(request.GET.getlist('spec'))
@@ -54,16 +53,11 @@ class VacancyListView(APIView):
             q = q & Q(company=company[0])
 
         vacancies = Vacancy.objects.filter(q).distinct().order_by('id')
-        serializer = VacancySerializer(vacancies, many=True)
+        full = get_super_job_vacancies(vacancies, keywords, type_of_work, experience)
 
 
-        # get_super_job_vacancies(keywords, type_of_work, experience)
-
-
-
+        serializer = VacancySerializer(full, many=True)
         setup_vacancy_display(serializer.data)
-
-
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

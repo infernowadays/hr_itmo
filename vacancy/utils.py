@@ -7,6 +7,8 @@ import requests
 from django.conf import settings
 from vacancy.models import Vacancy
 import json
+from company.models import Company
+
 
 def filter_by_skills(list_skills):
     if list_skills:
@@ -48,7 +50,20 @@ def create_skills(skills, vacancy):
         VacancySkills.objects.create(vacancy=vacancy, skill=skill)
 
 
-def get_super_job_vacancies(keywords, type_of_work, experience):
+class ListAsQuerySet(list):
+
+    def __init__(self, *args, model, **kwargs):
+        self.model = model
+        super().__init__(*args, **kwargs)
+
+    def filter(self, *args, **kwargs):
+        return self  # filter ignoring, but you can impl custom filter
+
+    def order_by(self, *args, **kwargs):
+        return self
+
+
+def get_super_job_vacancies(old, keywords, type_of_work, experience):
     app_url = 'https://api.superjob.ru/2.20/vacancies/'
     period = 0
     town = 'Ставрополь'
@@ -79,18 +94,18 @@ def get_super_job_vacancies(keywords, type_of_work, experience):
             vacancy['schedule_type'] = 3
 
         vacancy['employment_type'] = 1
-        vacancy['skills'] = []
-        vacancy['specializations'] = []
+
         vacancy['external'] = True
         vacancy['link'] = vacancy_json.get('link')
-        vacancy['courses'] = []
 
-        vacancy['company'] = {}
+        company_json = {'name': vacancy_json.get('firm_name')}
+        company = Company(**company_json)
+        vacancy['company'] = company
 
         # data = json.loads(vacancy)
 
         instance = Vacancy(**vacancy)
+        old = old | instance
+        # vacancies.append(instance)
 
-        vacancies.append(instance)
-
-    return vacancies
+    return old
