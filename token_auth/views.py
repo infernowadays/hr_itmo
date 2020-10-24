@@ -80,11 +80,11 @@ class LoginView(APIView):
             serializer = UserProfileSerializer(self.request.user)
 
         serializer_data = serializer.data
-        form = Form.objects.filter(student=self.request.user)[0]
+        form = Form.objects.filter(student=self.request.user)
         if not form:
-            serializer_data['form'] = None
+            serializer_data['form'] = {}
         else:
-            serializer_data['form'] = FormSerializer(form).data
+            serializer_data['form'] = FormSerializer(form[0]).data
 
         return Response(serializer_data, status=status.HTTP_200_OK)
 
