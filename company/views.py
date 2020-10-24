@@ -8,6 +8,7 @@ from .models import *
 from .serializers import *
 from company.models import Company
 from token_auth.enums import *
+from vacancy.serializers import VacancySerializer
 
 
 class CompanyListView(APIView):
@@ -59,4 +60,6 @@ class CompanyDetailView(APIView):
     def get(self, request, pk):
         company = self.get_object(pk)
         serializer = CompanySerializer(company)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer_data = serializer.data
+        serializer_data['vacancies'] = VacancySerializer(instance=company.vacancies, many=True).data
+        return Response(serializer_data, status=status.HTTP_200_OK)
