@@ -80,6 +80,9 @@ def get_super_job_vacancies(old, keywords, type_of_work, experience):
     vacancies = list([])
     for vacancy_json in response.json().get('objects'):
         vacancy = dict({})
+
+        vacancy['id'] = vacancy_json.get('profession')
+
         vacancy['name'] = vacancy_json.get('profession')
         vacancy['short_description'] = vacancy_json.get('candidat')
         vacancy['description'] = vacancy_json.get('candidat')
