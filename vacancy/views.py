@@ -52,11 +52,10 @@ class VacancyListView(APIView):
         if company:
             q = q & Q(company=company[0])
 
-        vacancies = Vacancy.objects.filter(q).distinct().order_by('id')
-        full = get_super_job_vacancies(vacancies, keywords, type_of_work, experience)
+        vacancies = list(Vacancy.objects.filter(q).distinct().order_by('id'))
+        external_vacancies = get_super_job_vacancies(vacancies, keywords, type_of_work, experience)
 
-
-        serializer = VacancySerializer(full, many=True)
+        serializer = VacancySerializer(vacancies + external_vacancies, many=True)
         setup_vacancy_display(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

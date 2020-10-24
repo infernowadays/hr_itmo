@@ -81,7 +81,7 @@ def get_super_job_vacancies(old, keywords, type_of_work, experience):
     for vacancy_json in response.json().get('objects'):
         vacancy = dict({})
 
-        vacancy['id'] = vacancy_json.get('profession')
+        vacancy['id'] = 1000
 
         vacancy['name'] = vacancy_json.get('profession')
         vacancy['short_description'] = vacancy_json.get('candidat')
@@ -108,7 +108,9 @@ def get_super_job_vacancies(old, keywords, type_of_work, experience):
         # data = json.loads(vacancy)
 
         instance = Vacancy(**vacancy)
-        old = old | instance
-        # vacancies.append(instance)
+        # old = old | instance
 
-    return old
+        # old |= Vacancy.objects.filter(pk=instance.pk)
+        vacancies.append(instance)
+
+    return vacancies
