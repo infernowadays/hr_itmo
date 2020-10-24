@@ -88,6 +88,14 @@ class VacancyDetailView(APIView):
         serializer = VacancySerializer(vacancy)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def put(self, request, pk):
+        vacancy = self.get_object(pk)
+        serializer = VacancySerializer(vacancy, data=self.request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SkillListView(APIView):
     permission_classes = (IsAuthenticated,)

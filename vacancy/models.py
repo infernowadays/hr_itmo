@@ -31,7 +31,7 @@ class Vacancy(models.Model):
     employment_type = models.IntegerField(null=False, blank=True)
 
     approved = models.BooleanField(null=False, blank=False, default=False)
-    is_active = models.BooleanField(null=False, blank=False, default=False)
+    is_active = models.BooleanField(null=False, blank=False, default=True)
 
     skills = models.ManyToManyField(Skill, through='VacancySkills')
     min_points = models.IntegerField(null=False, blank=True)
