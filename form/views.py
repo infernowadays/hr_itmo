@@ -4,10 +4,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from token_auth.enums import Type
 from .models import *
 from .serializers import *
-from .models import *
-from core.models import University
 
 
 class FormListView(APIView):

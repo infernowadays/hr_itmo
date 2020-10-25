@@ -1,11 +1,10 @@
-from rest_framework.authtoken.models import Token
-from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
-from .models import *
 from company.serializers import CompanySerializer
-from token_auth.serializers import UserProfileSerializer
 from core.serializers import SpecializationSerializer
+from token_auth.serializers import UserProfileSerializer
+from .models import *
 from .utils import create_skills
 
 
@@ -24,11 +23,14 @@ class CourseSerializer(ModelSerializer):
 class VacancyShortSerializer(ModelSerializer):
     company_id = serializers.CharField(source='company.id')
     company_name = serializers.CharField(source='company.name')
+    company_logo = serializers.CharField(source='company.logo')
+    skills = SkillSerializer(many=True, read_only=True, required=False)
 
     class Meta:
         model = Vacancy
         fields = (
-            'id', 'short_description', 'description', 'name', 'company_id', 'company_name', 'is_active', 'approved',)
+            'id', 'short_description', 'description', 'name', 'company_id', 'company_name', 'is_active', 'approved',
+            'company_logo', 'skills',)
 
 
 class VacancySerializer(ModelSerializer):

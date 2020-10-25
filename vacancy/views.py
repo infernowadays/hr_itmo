@@ -10,7 +10,7 @@ from telegram_bot.utils import TelegramBotMixin
 from token_auth.enums import Type
 from .serializers import *
 from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display, get_super_job_vacancies, \
-    filter_by_text
+    filter_by_text, setup_single_vacancy_display
 
 
 class VacancyListView(APIView):
@@ -135,7 +135,8 @@ class VacancyDetailView(APIView):
     def get(self, request, pk):
         vacancy = self.get_object(pk)
         serializer = VacancySerializer(vacancy)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(setup_single_vacancy_display(serializer.data), status=status.HTTP_200_OK)
 
     def put(self, request, pk):
         vacancy = self.get_object(pk)

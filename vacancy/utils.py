@@ -45,6 +45,19 @@ def setup_vacancy_display(vacancies):
                                     'text': Constants().get_schedule_types(vacancy.get('schedule_type'))}
 
 
+def setup_single_vacancy_display(vacancy):
+    vacancy['experience_type'] = {'id': vacancy.get('experience_type'),
+                                  'text': Constants().get_employment_types(vacancy.get('experience_type'))}
+
+    vacancy['employment_type'] = {'id': vacancy.get('employment_type'),
+                                  'text': Constants().get_experience_types(vacancy.get('employment_type'))}
+
+    vacancy['schedule_type'] = {'id': vacancy.get('schedule_type'),
+                                'text': Constants().get_schedule_types(vacancy.get('schedule_type'))}
+
+    return vacancy
+
+
 def create_skills(skills, vacancy):
     for string_skill in skills:
         skill = Skill.objects.filter(text=string_skill.get('text'))
