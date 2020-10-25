@@ -30,7 +30,7 @@ class VacancyShortSerializer(ModelSerializer):
         model = Vacancy
         fields = (
             'id', 'short_description', 'description', 'name', 'company_id', 'company_name', 'is_active', 'approved',
-            'company_logo', 'skills',)
+            'company_logo', 'skills', 'link', 'external',)
 
 
 class VacancySerializer(ModelSerializer):
