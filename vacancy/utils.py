@@ -33,6 +33,20 @@ def filter_by_text(text):
         return Q()
 
 
+def filter_by_experience_type(experience_type):
+    if experience_type:
+        return Q(experience_type=experience_type)
+    else:
+        return Q()
+
+
+def filter_by_type_of_work(type_of_work):
+    if type_of_work:
+        return Q(type_of_work=type_of_work)
+    else:
+        return Q()
+
+
 def setup_vacancy_display(vacancies):
     for vacancy in vacancies:
         vacancy['experience_type'] = {'id': vacancy.get('experience_type'),
@@ -94,7 +108,7 @@ def get_super_job_vacancies(keywords, type_of_work, experience):
     # , 'type_of_work': type_of_work, 'experience': experience
     headers = {'Content-Type': 'application/json', 'X-Api-App-Id': settings.SUPER_JOB_SECRET_KEY}
     payload = {'period': period, 'town': town, 'order_field': order_field, 'order_direction': order_direction,
-               'count': count, 'keywords': keywords}
+               'count': count, 'keywords': keywords, 'type_of_work': type_of_work, 'experience': experience, }
 
     response = requests.get(app_url, headers=headers, params=payload)
     vacancies = list([])

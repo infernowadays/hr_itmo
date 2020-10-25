@@ -25,3 +25,32 @@ class Constants:
 
     def get_schedule_types(self, id):
         return self.__schedule_types.get(str(id), '')
+
+
+class ConstantsSuperJob:
+    def __init__(self):
+        self.__experience_types = dict({})
+        self.__experience_types['1'] = '1'
+        self.__experience_types['2'] = '2'
+        self.__experience_types['3'] = '3'
+        self.__experience_types['4'] = '4'
+
+        self.__employment_types = dict({})
+        self.__employment_types['1'] = '6'
+        self.__employment_types['2'] = '10'
+        self.__employment_types['3'] = '12'
+        self.__employment_types['4'] = '6'
+
+        self.__schedule_types = dict({})
+        self.__schedule_types['1'] = 'Полный день'
+        self.__schedule_types['2'] = 'Гибкий график'
+        self.__schedule_types['3'] = 'Удаленная работа'
+
+    def get_experience_types(self, id):
+        return self.__experience_types.get(str(id), '')
+
+    def get_employment_types(self, id):
+        return self.__employment_types.get(str(id), '')
+
+    def get_schedule_types(self, id):
+        return self.__schedule_types.get(str(id), '')

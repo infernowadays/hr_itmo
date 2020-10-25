@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.http import Http404
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
@@ -9,8 +8,7 @@ from rest_framework.views import APIView
 from telegram_bot.utils import TelegramBotMixin
 from token_auth.enums import Type
 from .serializers import *
-from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display, get_super_job_vacancies, \
-    filter_by_text, setup_single_vacancy_display
+from .utils import *
 
 
 class VacancyListView(APIView):
@@ -22,13 +20,13 @@ class VacancyListView(APIView):
             return Response(VacancyShortSerializer(Vacancy.objects.all(), many=True).data, status=status.HTTP_200_OK)
 
         '''
-            experience
+            experience_type
             1 — без опыта
             2 — от 1 года
             3 — от 3 лет
             4 — от 6 лет
         '''
-        experience = 1
+        experience_type = 1
 
         '''
             type_of_work
@@ -43,11 +41,22 @@ class VacancyListView(APIView):
         q = Q() | filter_by_skills(request.GET.getlist('skill'))
         q = q & filter_by_specializations(request.GET.getlist('spec'))
         q = q & filter_by_text(request.GET.get('text'))
+        q = q & filter_by_experience_type(request.GET.get('experience_type'))
+        q = q & filter_by_type_of_work(request.GET.get('type_of_work'))
 
-        external_vacancies = list([])
+        keywords = ''
         if request.GET.get('text'):
             keywords = request.GET.get('text')
-            external_vacancies = get_super_job_vacancies(keywords, type_of_work, experience)
+
+        if request.GET.get('type_of_work'):
+            type_of_work = request.GET.get('type_of_work')
+            type_of_work = ConstantsSuperJob().get_employment_types(type_of_work)
+
+        if request.GET.get('experience_type'):
+            experience_type = request.GET.get('experience_type')
+            experience_type = ConstantsSuperJob().get_experience_types(experience_type)
+
+        external_vacancies = get_super_job_vacancies(keywords, type_of_work, experience_type)
 
         if request.GET.get('company'):
             company = Company.objects.filter(pk=request.GET.get('company'))
