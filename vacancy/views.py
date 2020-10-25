@@ -44,10 +44,10 @@ class VacancyListView(APIView):
         q = q & filter_by_specializations(request.GET.getlist('spec'))
         q = q & filter_by_text(request.GET.get('text'))
 
+        external_vacancies = list([])
         if request.GET.get('text'):
             keywords = request.GET.get('text')
-        else:
-            keywords = ''
+            external_vacancies = get_super_job_vacancies(keywords, type_of_work, experience)
 
         if request.GET.get('company'):
             company = Company.objects.filter(pk=request.GET.get('company'))
@@ -59,9 +59,12 @@ class VacancyListView(APIView):
             q = q & Q(company=company[0])
 
         vacancies = list(Vacancy.objects.filter(q).distinct().order_by('id'))
-        external_vacancies = get_super_job_vacancies(keywords, type_of_work, experience)
+        if external_vacancies:
+            total = vacancies + external_vacancies
+        else:
+            total = vacancies
 
-        serializer = VacancySerializer(vacancies + external_vacancies, many=True)
+        serializer = VacancySerializer(total, many=True)
         setup_vacancy_display(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
