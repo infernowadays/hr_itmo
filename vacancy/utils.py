@@ -1,13 +1,13 @@
-from django.db.models import Q
-from vacancy.models import Skill
-from .constants import *
-from core.models import Specialization
-from .models import VacancySkills
 import requests
 from django.conf import settings
-from vacancy.models import Vacancy
-import json
+from django.db.models import Q
+
 from company.models import Company
+from core.models import Specialization
+from vacancy.models import Skill
+from vacancy.models import Vacancy
+from .constants import *
+from .models import VacancySkills
 
 
 def filter_by_skills(list_skills):
@@ -22,6 +22,13 @@ def filter_by_specializations(list_specializations):
     if list_specializations:
         specializations = Specialization.objects.filter(id__in=list_specializations).values_list('id', flat=True)
         return Q(specializations__in=specializations)
+    else:
+        return Q()
+
+
+def filter_by_text(text):
+    if text:
+        return Q(Q(name__icontains=text) | Q(short_description__icontains=text) | Q(description__icontains=text))
     else:
         return Q()
 

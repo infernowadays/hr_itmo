@@ -18,10 +18,10 @@ class Constants:
         self.__schedule_types['3'] = 'Удаленная работа'
 
     def get_experience_types(self, id):
-        return self.__experience_types[str(id)]
+        return self.__experience_types.get(str(id), '')
 
     def get_employment_types(self, id):
-        return self.__employment_types[str(id)]
+        return self.__employment_types.get(str(id), '')
 
     def get_schedule_types(self, id):
-        return self.__schedule_types[str(id)]
+        return self.__schedule_types.get(str(id), '')

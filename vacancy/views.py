@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from telegram_bot.utils import TelegramBotMixin
 from token_auth.enums import Type
 from .serializers import *
-from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display, get_super_job_vacancies
+from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display, get_super_job_vacancies, \
+    filter_by_text
 
 
 class VacancyListView(APIView):
@@ -39,10 +40,14 @@ class VacancyListView(APIView):
         '''
         type_of_work = 6
 
-        keywords = 'программист'
-
         q = Q() | filter_by_skills(request.GET.getlist('skill'))
         q = q & filter_by_specializations(request.GET.getlist('spec'))
+        q = q & filter_by_text(request.GET.get('text'))
+
+        if request.GET.get('text'):
+            keywords = request.GET.get('text')
+        else:
+            keywords = ''
 
         if request.GET.get('company'):
             company = Company.objects.filter(pk=request.GET.get('company'))
