@@ -1,22 +1,24 @@
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import *
-from .serializers import *
 from company.models import Company
 from token_auth.enums import *
-from vacancy.serializers import VacancySerializer
 from vacancy.models import Vacancy
+from vacancy.serializers import VacancySerializer
+from .serializers import *
 
 
 class CompanyListView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
+        if self.request.user.is_anonymous:
+            return Response(CompanySerializer(Company.objects.all(), many=True).data, status=status.HTTP_200_OK)
+
         if self.request.user.type == Type.ADMINISTRATOR.value:
             companies = CompanyShortSerializer(Company.objects.all(), many=True).data
             for company in companies:

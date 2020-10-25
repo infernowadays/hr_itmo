@@ -1,7 +1,7 @@
 from django.http import Http404
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -12,12 +12,16 @@ from .utils import *
 
 
 class VacancyListView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        if self.request.user.type == Type.ADMINISTRATOR.value:
-            return Response(VacancyShortSerializer(Vacancy.objects.all(), many=True).data, status=status.HTTP_200_OK)
+        try:
+            if self.request.user.type == Type.ADMINISTRATOR.value:
+                return Response(VacancyShortSerializer(Vacancy.objects.all(), many=True).data,
+                                status=status.HTTP_200_OK)
+        except AttributeError:
+            pass
 
         '''
             experience_type
@@ -38,7 +42,7 @@ class VacancyListView(APIView):
         '''
         type_of_work = 6
 
-        q = Q() | filter_by_skills(request.GET.getlist('skill'))
+        q = Q() | filter_by_skills(request.GET.get('skill'))
         q = q & filter_by_specializations(request.GET.getlist('spec'))
         q = q & filter_by_text(request.GET.get('text'))
         q = q & filter_by_experience_type(request.GET.get('experience_type'))
@@ -131,7 +135,7 @@ class FavouriteVacancyListView(APIView):
 
 
 class VacancyDetailView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     authentication_classes = (TokenAuthentication,)
 
     @staticmethod
