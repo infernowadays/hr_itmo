@@ -1,16 +1,14 @@
-import datetime
-import os
-
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
 from django.contrib.auth.models import User
 from django.db import models
-from .enums import *
+
 from core.models import Specialization
+from .enums import *
 
 
 class UserProfileManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, university_id, student_id_type, student_id, type, date_of_birth,
-                    sex, specialization, degree, course, password):
+                    sex, specialization, degree, course, telegram, password):
         if not email or not first_name or not last_name or not type or not date_of_birth or not sex:
             raise ValueError("Provide all the data")
 
@@ -26,7 +24,9 @@ class UserProfileManager(BaseUserManager):
             sex=sex,
             specialization=specialization,
             degree=degree,
-            course=course
+            course=course,
+            telegram=telegram
+
         )
 
         user.set_password(password)
@@ -46,7 +46,8 @@ class UserProfileManager(BaseUserManager):
             sex=sex,
             specialization=specialization,
             degree=degree,
-            course=course
+            course=course,
+            telegram=telegram
         )
 
         user.set_password(password)
@@ -71,7 +72,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     date_of_birth = models.DateField(null=False, blank=False)
     sex = models.CharField(max_length=16, choices=Sex.choices(), default=Sex.MALE.value, blank=False)
     course = models.IntegerField(blank=True, default=1)
-
+    telegram = models.CharField(max_length=128, blank=True)
     specialization = models.ForeignKey(Specialization, null=False, db_constraint=True, on_delete=models.CASCADE)
 
     is_active = models.BooleanField(default=True)

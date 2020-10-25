@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'vacancy',
     'company',
     'form',
+    'telegram_bot',
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -151,3 +152,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 SUPER_JOB_SECRET_KEY = config('SUPER_JOB_SECRET_KEY')
+TELEGRAM_BOT_ACCESS_TOKEN = config('TELEGRAM_BOT_ACCESS_TOKEN')
+

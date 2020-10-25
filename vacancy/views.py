@@ -1,17 +1,15 @@
+from django.db.models import Q
+from django.http import Http404
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.http import Http404
 
-from .models import *
-from .serializers import *
-from .constants import *
-from company.models import Company
-from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display, get_super_job_vacancies
-from django.db.models import Q
+from telegram_bot.utils import TelegramBotMixin
 from token_auth.enums import Type
+from .serializers import *
+from .utils import filter_by_skills, filter_by_specializations, setup_vacancy_display, get_super_job_vacancies
 
 
 class VacancyListView(APIView):
@@ -80,6 +78,10 @@ class VacancyListView(APIView):
 
             serializer.save(company=company[0], skills=request.data.get('skills'),
                             specializations=request.data.get('specializations'), courses=request.data.get('courses'))
+
+            telegram_bot = TelegramBotMixin(request.data.get('specializations'), serializer.data.get('id'))
+            telegram_bot.get_updates()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

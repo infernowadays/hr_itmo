@@ -1,8 +1,9 @@
 from django.db import models
-from .enums import *
+
 from company.models import Company
-from token_auth.models import UserProfile
 from core.models import Specialization
+from token_auth.models import UserProfile
+from .enums import *
 
 
 class Skill(models.Model):
@@ -13,8 +14,8 @@ class Skill(models.Model):
 
 
 class Course(models.Model):
-    name = models.CharField(max_length=256, null=False)
-    link = models.CharField(max_length=256, null=False)
+    name = models.CharField(max_length=256, null=False, blank=True)
+    link = models.CharField(max_length=256, null=False, blank=True)
 
     class Meta:
         db_table = 'course'
