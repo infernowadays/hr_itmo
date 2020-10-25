@@ -77,7 +77,7 @@ class VacancyListView(APIView):
         else:
             total = vacancies
 
-        serializer = VacancySerializer(total, many=True)
+        serializer = VacancyShortSerializer(total, many=True)
         setup_vacancy_display(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
