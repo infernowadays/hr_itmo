@@ -7,13 +7,16 @@ from .enums import *
 
 
 class UserProfileManager(BaseUserManager):
-    def create_user(self, email, first_name, last_name, date_of_birth, sex, password=None):
+    def create_user(self, email, first_name, last_name, date_of_birth, sex, telegram=None, password=None):
+        telegram = '' if telegram is None else telegram
+
         user = self.model(
             email=self.normalize_email(email),
             first_name=first_name,
             last_name=last_name,
             date_of_birth=date_of_birth,
-            sex=sex
+            sex=sex,
+            telegram=telegram
         )
 
         user.set_password(password)
