@@ -10,6 +10,24 @@ from .constants import *
 from .models import VacancySkills
 
 
+def filter_by_request_types(list_roles, user):
+    q = Q()
+    if list_roles:
+        for role in list_roles:
+            if role == 'creator':
+                companies_ids = Company.objects.filter(profile=user).values_list('id', flat=True).distinct()
+                vacancies_ids = Vacancy.objects.filter(company_id__in=companies_ids).values_list('id',
+                                                                                                 flat=True).distinct()
+                q = q | Q(vacancy_id__in=vacancies_ids)
+            elif role == 'member':
+                q = q | Q(user=user)
+
+    else:
+        q = Q(~Q(creator=user) & ~Q(members=user))
+
+    return q
+
+
 def filter_by_skills(list_skills):
     if list_skills:
         skills = Skill.objects.filter(id__in=list_skills).values_list('id', flat=True)

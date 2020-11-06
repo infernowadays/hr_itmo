@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from token_auth.enums import Type
 from .serializers import *
 from .utils import *
 
@@ -69,10 +68,6 @@ class FavouriteVacancyListView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
-        Vacancy.objects.all().delete()
-        return Response(status=status.HTTP_200_OK)
-
 
 class VacancyDetailView(APIView):
     permission_classes = (AllowAny,)
@@ -100,17 +95,6 @@ class VacancyDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SkillListView(APIView):
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)
-
-    def get(self, request):
-        skills = Skill.objects.all()
-        serializer = SkillSerializer(skills, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class RequestListView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
@@ -118,50 +102,40 @@ class RequestListView(APIView):
     def post(self, request):
         serializer = RequestSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user, vacancy_id=request.data['vacancy'])
+            serializer.save(user=request.user, vacancy_id=request.data['vacancy_id'])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        if self.request.user.type == Type.EMPLOYER.value:
-            company = Company.objects.filter(hr=self.request.user)[0]
-            vacancies = VacancyShortSerializer(instance=company.vacancies, many=True)
-            for vacancy in vacancies.data:
-                responses = list([])
-
-                for request in Request.objects.filter(vacancy_id=vacancy.get('id')):
-                    response = dict({})
-                    response['vacancy_name'] = vacancy.get('name')
-                    response['response_id'] = request.id
-                    response['student_id'] = request.user.id
-                    response['student_name'] = request.user.first_name + ' ' + request.user.last_name
-                    responses.append(response)
-
-                vacancy['responses'] = responses
-
-            responses = vacancies.data
-
-        elif self.request.user.type == Type.STUDENT.value:
-            responses = list([])
-
-            for request in Request.objects.filter(user=self.request.user):
-                vacancy = Vacancy.objects.get(id=request.vacancy.id)
-                company = Company.objects.get(id=vacancy.company.id)
-
-                response = dict({})
-                response['vacancy_id'] = vacancy.id
-                response['vacancy_name'] = vacancy.name
-                response['vacancy_description'] = vacancy.description
-                response['vacancy_short_description'] = vacancy.short_description
-                response['response_id'] = request.id
-                response['response_decision'] = request.decision
-                response['response_seen'] = request.seen
-                response['company_id'] = company.id
-                response['company_logo'] = company.logo
-                response['company_name'] = company.name
-                responses.append(response)
+        roles = list([])
+        if not request.GET.getlist('me'):
+            roles.append('creator')
+            roles.append('member')
         else:
-            return Response(RequestSerializer(Request.objects.all(), many=True).data, status=status.HTTP_200_OK)
+            roles = request.GET.getlist('me')
+
+        q = Q()
+        q = q & filter_by_request_types(list_roles=roles, user=request.user)
+
+        requests = Request.objects.filter(q)
+        vacancies = Vacancy.objects.filter(id__in=requests.values_list('vacancy_id', flat=True)).distinct()
+
+        responses = list([])
+        for i in range(len(vacancies)):
+            response = dict({})
+            response['vacancy_id'] = vacancies[i].id
+            response['vacancy_name'] = vacancies[i].name
+            response['vacancy_description'] = vacancies[i].description
+            response['response_id'] = requests[i].id
+            response['response_decision'] = requests[i].decision
+            response['response_seen'] = requests[i].seen
+            response['company_id'] = vacancies[i].company.id
+            response['company_logo'] = vacancies[i].company.logo
+            response['company_name'] = vacancies[i].company.name
+            response['from_user_id'] = requests[i].user.id
+            response['from_user_name'] = requests[i].user.first_name + ' ' + requests[i].user.last_name
+
+            responses.append(response)
 
         return Response(responses, status=status.HTTP_200_OK)
 

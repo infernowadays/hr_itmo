@@ -18,8 +18,8 @@ class VacancyShortSerializer(ModelSerializer):
     class Meta:
         model = Vacancy
         fields = (
-            'id', 'description', 'name', 'company_id', 'company_name', 'is_active', 'approved', 'company_logo',
-            'skills',)
+            'id', 'description', 'name', 'company_id', 'company_name', 'is_active', 'approved',
+            'company_logo', 'skills',)
 
 
 class VacancySerializer(ModelSerializer):

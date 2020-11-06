@@ -9,8 +9,6 @@ urlpatterns = [
 
     path('favouriteVacancies/', csrf_exempt(views.FavouriteVacancyListView.as_view())),
 
-    path('skills/', csrf_exempt(views.SkillListView.as_view())),
-
     path('requests/', csrf_exempt(views.RequestListView.as_view())),
     path('requests/<int:pk>/', csrf_exempt(views.RespondRequestView.as_view())),
 ]
