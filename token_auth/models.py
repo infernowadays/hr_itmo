@@ -39,7 +39,7 @@ class UserProfileManager(BaseUserManager):
 
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(verbose_name='email', max_length=60, unique=True)
+    email = models.EmailField(verbose_name='email', max_length=64, unique=True)
     first_name = models.CharField(max_length=64, null=False, blank=False)
     last_name = models.CharField(max_length=64, null=False, blank=False)
     date_of_birth = models.DateField(null=False, blank=False)

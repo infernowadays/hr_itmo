@@ -42,3 +42,9 @@ class JobSerializer(ModelSerializer):
     class Meta:
         model = Job
         fields = '__all__'
+
+
+class LandingSerializer(ModelSerializer):
+    class Meta:
+        model = Landing
+        fields = '__all__'

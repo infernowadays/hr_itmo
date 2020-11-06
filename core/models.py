@@ -53,3 +53,11 @@ class JobDuties(models.Model):
 
     class Meta:
         db_table = 'job_duties'
+
+
+class Landing(models.Model):
+    email = models.EmailField(verbose_name='email', max_length=64, null=False, blank=False)
+    status = models.CharField(max_length=64, null=False, blank=False)
+
+    class Meta:
+        db_table = 'landing'
