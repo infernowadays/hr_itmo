@@ -11,13 +11,16 @@ from .serializers import *
 
 class CompanyListView(APIView):
     permission_classes = (AllowAny,)
-    authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
         serializer = CompanySerializer(Company.objects.all(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        if self.request.user.is_anonymous:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_403_FORBIDDEN)
+
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
             city = City.objects.filter(id=request.data.get('city'))[0]
