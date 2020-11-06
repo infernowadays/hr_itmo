@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
+from core.models import JobDuties
 from core.serializers import UniversitySerializer, SpecializationSerializer
 from token_auth.serializers import UserProfileSerializer
 from vacancy.serializers import SkillSerializer, JobSerializer
@@ -13,8 +14,6 @@ class EducationSerializer(ModelSerializer):
     class Meta:
         model = Education
         fields = '__all__'
-
-
 
 
 class FormSerializer(ModelSerializer):
