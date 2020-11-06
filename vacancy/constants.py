@@ -17,6 +17,11 @@ class Constants:
         self.__schedule_types['2'] = 'Гибкий график'
         self.__schedule_types['3'] = 'Удаленная работа'
 
+        self.__project_types = dict({})
+        self.__project_types['1'] = 'Стартап'
+        self.__project_types['2'] = 'Комьюнити'
+        self.__project_types['3'] = 'Научный проект'
+
     def get_experience_types(self, id):
         return self.__experience_types.get(str(id), '')
 
@@ -25,6 +30,9 @@ class Constants:
 
     def get_schedule_types(self, id):
         return self.__schedule_types.get(str(id), '')
+
+    def get_project_types(self, id):
+        return self.__project_types.get(str(id), '')
 
 
 class ConstantsSuperJob:

@@ -1,48 +1,22 @@
 from django.db import models
 
 from company.models import Company
-from core.models import Specialization
+from form.models import Job
 from token_auth.models import UserProfile
 from .enums import *
-
-
-class Skill(models.Model):
-    text = models.CharField(max_length=256, null=False, unique=True)
-
-    class Meta:
-        db_table = 'skill'
-
-
-class Course(models.Model):
-    name = models.CharField(max_length=256, null=False, blank=True)
-    link = models.CharField(max_length=256, null=False, blank=True)
-
-    class Meta:
-        db_table = 'course'
+from core.models import Skill
 
 
 class Vacancy(models.Model):
-    name = models.CharField(max_length=128, null=False, blank=True)
-    short_description = models.CharField(max_length=256, null=False, blank=True)
-    description = models.TextField(null=False, blank=True)
-    salary = models.IntegerField(null=False, blank=True)
-
-    experience_type = models.IntegerField(null=False, blank=True)
-    schedule_type = models.IntegerField(null=False, blank=True)
-    employment_type = models.IntegerField(null=False, blank=True)
-
+    name = models.CharField(max_length=128, null=False, blank=False)
+    description = models.TextField(null=False, blank=False)
+    schedule_type = models.IntegerField(null=False, blank=False)
+    employment_type = models.IntegerField(null=False, blank=False)
     approved = models.BooleanField(null=False, blank=False, default=False)
+    partnership = models.TextField(null=False, blank=True)
     is_active = models.BooleanField(null=False, blank=False, default=True)
-
     skills = models.ManyToManyField(Skill, through='VacancySkills')
-    min_points = models.IntegerField(null=True, blank=True, default=0)
-    specializations = models.ManyToManyField(Specialization, through='VacancySpecializations')
-
-    external = models.BooleanField(null=False, blank=False, default=False)
-    link = models.CharField(max_length=256, null=True, blank=True, default='')
-
-    courses = models.ManyToManyField(Course, through='VacancyCourses')
-
+    jobs = models.ManyToManyField(Job, through='VacancyJobs')
     company = models.ForeignKey(Company, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='vacancies')
 
@@ -56,25 +30,15 @@ class VacancySkills(models.Model):
 
     class Meta:
         db_table = 'vacancy_skills'
-        unique_together = ['vacancy', 'skill']
 
 
-class VacancySpecializations(models.Model):
+class VacancyJobs(models.Model):
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, null=False)
-    specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE, null=False)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, null=False)
 
     class Meta:
-        db_table = 'vacancy_specializations'
-        unique_together = ['vacancy', 'specialization']
-
-
-class VacancyCourses(models.Model):
-    vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, null=False)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
-
-    class Meta:
-        db_table = 'vacancy_courses'
-        unique_together = ['vacancy', 'course']
+        db_table = 'vacancy_jobs'
+        unique_together = ['vacancy', 'job']
 
 
 class VacancyFavorites(models.Model):

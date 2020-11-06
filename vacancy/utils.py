@@ -28,7 +28,7 @@ def filter_by_specializations(list_specializations):
 
 def filter_by_text(text):
     if text:
-        return Q(Q(name__icontains=text) | Q(short_description__icontains=text) | Q(description__icontains=text))
+        return Q(Q(name__icontains=text) | Q(description__icontains=text))
     else:
         return Q()
 
@@ -51,9 +51,6 @@ def setup_vacancy_display(vacancies):
     for vacancy in vacancies:
         vacancy['experience_type'] = {'id': vacancy.get('experience_type'),
                                       'text': Constants().get_employment_types(vacancy.get('experience_type'))}
-
-        vacancy['employment_type'] = {'id': vacancy.get('employment_type'),
-                                      'text': Constants().get_experience_types(vacancy.get('employment_type'))}
 
         vacancy['schedule_type'] = {'id': vacancy.get('schedule_type'),
                                     'text': Constants().get_schedule_types(vacancy.get('schedule_type'))}

@@ -1,79 +1,30 @@
 from django.db import models
 
-from django.db import models
-from token_auth.models import UserProfile
 from core.models import City, University, Specialization
+from core.models import Skill, Job, Duty
+from token_auth.models import UserProfile
 
 
 class Education(models.Model):
-    started = models.CharField(max_length=16, null=False, blank=False)
-    ended = models.CharField(max_length=16, null=False, blank=False)
-    university = models.ForeignKey(University, null=False, db_constraint=True, on_delete=models.CASCADE)
-    specialization = models.ForeignKey(Specialization, null=False, db_constraint=True, on_delete=models.CASCADE)
-    is_extra = models.BooleanField(null=False, blank=False, default=False)
+    graduate_year = models.IntegerField(null=False, blank=False)
+    university = models.ForeignKey(University, null=False, blank=False, db_constraint=True, on_delete=models.CASCADE)
+    specialization = models.ForeignKey(Specialization, null=False, blank=False, db_constraint=True,
+                                       on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'education'
 
 
-class Duty(models.Model):
-    text = models.TextField(null=False, blank=False)
-
-    class Meta:
-        db_table = 'duty'
-
-
-class Job(models.Model):
-    started = models.CharField(max_length=16, null=False, blank=False)
-    ended = models.CharField(max_length=16, null=False, blank=False)
-    name = models.CharField(max_length=128, null=False, blank=False)
-    duties = models.ManyToManyField(Duty, through='JobDuties')
-
-    class Meta:
-        db_table = 'job'
-
-
-class JobDuties(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, null=False)
-    duty = models.ForeignKey(Duty, on_delete=models.CASCADE, null=False)
-
-    class Meta:
-        db_table = 'job_duties'
-
-
-class ExtraSkill(models.Model):
-    text = models.TextField(null=False, blank=False)
-
-    class Meta:
-        db_table = 'extra_skill'
-
-
-class SoftSkill(models.Model):
-    text = models.TextField(null=False, blank=False)
-
-    class Meta:
-        db_table = 'soft_skill'
-
-
-class Achievement(models.Model):
-    text = models.TextField(null=False, blank=False)
-
-    class Meta:
-        db_table = 'achievement'
-
 
 class Form(models.Model):
-    aim = models.TextField(null=False, blank=False)
-
-    student = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
+    city = models.CharField(max_length=128, null=False, blank=False)
+    profile = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='form')
+    photo = models.TextField(blank=True)
 
-    educations = models.ManyToManyField(Education, through='FormEducations')
+    educations = models.ManyToManyField(Education, through='FormEducations', blank=True)
     jobs = models.ManyToManyField(Job, through='FormJobs')
-
-    extra_skills = models.ManyToManyField(ExtraSkill, through='FormExtraSkills')
-    soft_skills = models.ManyToManyField(SoftSkill, through='FormSoftSkills')
-    achievements = models.ManyToManyField(Achievement, through='FormAchievements')
+    skills = models.ManyToManyField(Skill, through='FormSkills')
 
     class Meta:
         db_table = 'form'
@@ -95,25 +46,9 @@ class FormJobs(models.Model):
         db_table = 'form_jobs'
 
 
-class FormExtraSkills(models.Model):
+class FormSkills(models.Model):
     form = models.ForeignKey(Form, on_delete=models.CASCADE, null=False)
-    extra_skill = models.ForeignKey(ExtraSkill, on_delete=models.CASCADE, null=False)
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, null=False)
 
     class Meta:
-        db_table = 'form_extra_skills'
-
-
-class FormSoftSkills(models.Model):
-    form = models.ForeignKey(Form, on_delete=models.CASCADE, null=False)
-    soft_skill = models.ForeignKey(SoftSkill, on_delete=models.CASCADE, null=False)
-
-    class Meta:
-        db_table = 'form_soft_skills'
-
-
-class FormAchievements(models.Model):
-    form = models.ForeignKey(Form, on_delete=models.CASCADE, null=False)
-    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE, null=False)
-
-    class Meta:
-        db_table = 'form_achievements'
+        db_table = 'form_skills'

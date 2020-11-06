@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from telegram_bot.utils import TelegramBotMixin
 from token_auth.enums import Type
 from .serializers import *
 from .utils import *
@@ -16,55 +15,13 @@ class VacancyListView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        try:
-            if self.request.user.type == Type.ADMINISTRATOR.value:
-                return Response(VacancyShortSerializer(Vacancy.objects.all(), many=True).data,
-                                status=status.HTTP_200_OK)
-        except AttributeError:
-            pass
-
-        '''
-            experience_type
-            1 — без опыта
-            2 — от 1 года
-            3 — от 3 лет
-            4 — от 6 лет
-        '''
-        experience_type = 1
-
-        '''
-            type_of_work
-            6 — полный день
-            10 — неполный день
-            12 — сменный график
-            7 — временная работа
-            9 — вахтовым методом
-        '''
-        type_of_work = 6
 
         q = Q() | filter_by_skills(request.GET.get('skill'))
-        q = q & filter_by_specializations(request.GET.getlist('spec'))
         q = q & filter_by_text(request.GET.get('text'))
         q = q & filter_by_experience_type(request.GET.get('experience_type'))
-        q = q & filter_by_type_of_work(request.GET.get('type_of_work'))
-
-        keywords = ''
-        if request.GET.get('text'):
-            keywords = request.GET.get('text')
-
-        if request.GET.get('type_of_work'):
-            type_of_work = request.GET.get('type_of_work')
-            type_of_work = ConstantsSuperJob().get_employment_types(type_of_work)
-
-        if request.GET.get('experience_type'):
-            experience_type = request.GET.get('experience_type')
-            experience_type = ConstantsSuperJob().get_experience_types(experience_type)
-
-        external_vacancies = get_super_job_vacancies(keywords, type_of_work, experience_type)
 
         if request.GET.get('company'):
             company = Company.objects.filter(pk=request.GET.get('company'))
-
         else:
             company = {}
 
@@ -72,43 +29,23 @@ class VacancyListView(APIView):
             q = q & Q(company=company[0])
 
         vacancies = list(Vacancy.objects.filter(q).distinct().order_by('id'))
-        if external_vacancies:
-            total = vacancies + external_vacancies
-        else:
-            total = vacancies
-
-        serializer = VacancyShortSerializer(total, many=True)
-        setup_vacancy_display(serializer.data)
+        serializer = VacancyShortSerializer(vacancies, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = VacancySerializer(data=request.data)
         if serializer.is_valid():
-            if request.GET.get('company') and self.request.user.type == Type.ADMINISTRATOR.value:
-                company = Company.objects.filter(pk=request.GET.get('company'))
-            elif self.request.user.type == Type.STUDENT.value:
-                return Response({'error': 'student can not create a company'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-            elif self.request.user.type == Type.EMPLOYER.value:
-                company = Company.objects.filter(hr=self.request.user)
+
+            queryset = Company.objects.filter(id=request.data.pop('company_id'))
+            if not queryset:
+                return Response({'error': 'company not found'}, status=status.HTTP_404_NOT_FOUND)
             else:
-                return Response({'error': 'provide company id'}, status=status.HTTP_400_BAD_REQUEST)
-
-            if not company:
-                return Response({'error': 'user does not belong to any company'}, status=status.HTTP_404_NOT_FOUND)
-
-            serializer.save(company=company[0], skills=request.data.get('skills'),
-                            specializations=request.data.get('specializations'), courses=request.data.get('courses'))
-
-            telegram_bot = TelegramBotMixin(request.data.get('specializations'), serializer.data.get('id'))
-            telegram_bot.get_updates()
+                company = queryset[0]
+            serializer.save(company=company, skills=request.data.get('skills'), jobs=request.data.get('jobs'))
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request):
-        Vacancy.objects.all().delete()
-        return Response(status=status.HTTP_200_OK)
 
 
 class FavouriteVacancyListView(APIView):

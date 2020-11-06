@@ -22,3 +22,34 @@ class City(models.Model):
 
     class Meta:
         db_table = 'city'
+
+
+class Skill(models.Model):
+    text = models.CharField(max_length=256, null=False, unique=True)
+
+    class Meta:
+        db_table = 'skill'
+
+
+class Duty(models.Model):
+    text = models.TextField(null=False, blank=False)
+
+    class Meta:
+        db_table = 'duty'
+
+
+class Job(models.Model):
+    duration = models.IntegerField(null=False, blank=False)
+    name = models.CharField(max_length=128, null=False, blank=False)
+    duties = models.ManyToManyField(Duty, through='JobDuties')
+
+    class Meta:
+        db_table = 'job'
+
+
+class JobDuties(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, null=False)
+    duty = models.ForeignKey(Duty, on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        db_table = 'job_duties'
