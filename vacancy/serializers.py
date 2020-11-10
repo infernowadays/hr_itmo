@@ -14,12 +14,15 @@ class VacancyShortSerializer(ModelSerializer):
     company_name = serializers.CharField(source='company.name')
     company_logo = serializers.CharField(source='company.logo')
     skills = SkillSerializer(many=True, read_only=True, required=False)
+    jobs = JobSerializer(many=True)
+    schedule_type = serializers.CharField()
+    employment_type = serializers.CharField()
 
     class Meta:
         model = Vacancy
         fields = (
             'id', 'description', 'name', 'company_id', 'company_name', 'is_active', 'approved',
-            'company_logo', 'skills',)
+            'company_logo', 'skills', 'jobs', 'schedule_type', 'employment_type',)
 
 
 class VacancySerializer(ModelSerializer):

@@ -29,7 +29,7 @@ class VacancyListView(APIView):
         vacancies = list(Vacancy.objects.filter(q).distinct().order_by('id'))
         serializer = VacancyShortSerializer(vacancies, many=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(setup_vacancy_display(serializer.data), status=status.HTTP_200_OK)
 
     def post(self, request):
         if self.request.user.is_anonymous:
@@ -82,7 +82,7 @@ class VacancyDetailView(APIView):
 
     def get(self, request, pk):
         vacancy = self.get_object(pk)
-        serializer = VacancySerializer(vacancy)
+        serializer = VacancyShortSerializer(vacancy)
 
         return Response(setup_single_vacancy_display(serializer.data), status=status.HTTP_200_OK)
 
