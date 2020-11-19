@@ -8,8 +8,7 @@ class Role(models.Model):
     full_name = models.CharField(max_length=256, null=False, blank=False)
     position = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
-    experience = models.TextField(null=False, blank=False)
-    photo = models.TextField(null=False, blank=True)
+    photo = models.TextField(null=False, blank=True, default='')
 
     class Meta:
         db_table = 'role'
