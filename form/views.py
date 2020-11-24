@@ -1,5 +1,6 @@
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -33,7 +34,8 @@ class FormListView(APIView):
 
 
 class FormDetailView(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
     @staticmethod
     def get_object(pk):
@@ -46,3 +48,13 @@ class FormDetailView(APIView):
         form = self.get_object(pk)
         serializer = FormSerializer(form)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk):
+        form = self.get_object(pk)
+        serializer = FormSerializer(form, data=self.request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(educations=self.request.data.get('educations'),
+                            skills=self.request.data.get('skills'),
+                            jobs=self.request.data.get('jobs'))
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

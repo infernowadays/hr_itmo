@@ -1,10 +1,9 @@
 from rest_framework.serializers import ModelSerializer
 
-from core.models import JobDuties
 from core.serializers import UniversitySerializer, SpecializationSerializer
 from token_auth.serializers import UserProfileSerializer
 from vacancy.serializers import SkillSerializer, JobSerializer
-from .models import *
+from .utils import *
 
 
 class EducationSerializer(ModelSerializer):
@@ -29,31 +28,32 @@ class FormSerializer(ModelSerializer):
 
         form = Form.objects.create(**validated_data)
 
-        for education in educations:
-            education['university'] = University.objects.get(pk=education['university'])
-            education['specialization'] = Specialization.objects.get(pk=education['specialization'])
-            education = Education.objects.create(**education)
-            FormEducations.objects.create(form=form, education=education)
-
-        for job in jobs:
-            duties = job.pop('duties')
-            job = Job.objects.create(**job)
-            for duty in duties:
-                duty = Duty.objects.create(text=duty)
-                JobDuties.objects.create(job=job, duty=duty)
-            FormJobs.objects.create(form=form, job=job)
-
-        for skill_text in skills:
-            skill = Skill.objects.filter(text=skill_text.get('text'))
-
-            if not skill:
-                skill_text = Skill.objects.create(id=skill_text.get('id'), text=skill_text.get('text'))
-            else:
-                skill_text = skill.get()
-
-            FormSkills.objects.create(form=form, skill=skill_text)
+        create_form_educations(form, educations)
+        create_form_jobs(form, jobs)
+        create_form_skills(form, skills)
 
         return form
+
+    def update(self, instance, validated_data):
+        educations = validated_data.pop('educations')
+        jobs = validated_data.pop('jobs')
+        skills = validated_data.pop('skills')
+
+        if educations is not None:
+            create_form_educations(instance, educations)
+
+        if jobs is not None:
+            create_form_jobs(instance, jobs)
+
+        if skills is not None:
+            create_form_skills(instance, skills)
+
+        instance.city = validated_data.get('city', instance.city)
+        instance.photo = validated_data.get('city', instance.photo)
+
+        instance.save()
+
+        return instance
 
     def to_representation(self, obj):
         form = super(FormSerializer, self).to_representation(obj)
