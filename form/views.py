@@ -30,3 +30,19 @@ class FormListView(APIView):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FormDetailView(APIView):
+    permission_classes = (AllowAny,)
+
+    @staticmethod
+    def get_object(pk):
+        try:
+            return Form.objects.get(pk=pk)
+        except Form.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        form = self.get_object(pk)
+        serializer = FormSerializer(form)
+        return Response(serializer.data, status=status.HTTP_200_OK)
