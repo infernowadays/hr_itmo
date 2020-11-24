@@ -177,3 +177,8 @@ class RespondRequestView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        request_obj = self.get_object(pk)
+        request_obj.delete()
+        return Response(status=status.HTTP_200_OK)
