@@ -3,11 +3,11 @@ from django.conf import settings
 from django.db.models import Q
 
 from company.models import Company
-from core.models import Specialization
+from core.models import Specialization, JobDuties, Duty
 from vacancy.models import Skill
-from vacancy.models import Vacancy
+from vacancy.models import Vacancy, Job
 from .constants import *
-from .models import VacancySkills
+from .models import VacancySkills, VacancyJobs
 
 
 def filter_by_request_types(list_roles, user):
@@ -86,7 +86,8 @@ def setup_single_vacancy_display(vacancy):
     return vacancy
 
 
-def create_skills(skills, vacancy):
+def create_vacancy_skills(vacancy, skills):
+    VacancySkills.objects.filter(vacancy_id=vacancy.id).delete()
     for string_skill in skills:
         skill = Skill.objects.filter(text=string_skill.get('text'))
 
@@ -96,6 +97,17 @@ def create_skills(skills, vacancy):
             skill = skill.get()
 
         VacancySkills.objects.create(vacancy=vacancy, skill=skill)
+
+
+def create_vacancy_jobs(vacancy, jobs):
+    VacancyJobs.objects.filter(vacancy_id=vacancy.id).delete()
+    for job in jobs:
+        duties = job.pop('duties')
+        job = Job.objects.create(**job)
+        for duty in duties:
+            duty = Duty.objects.create(text=duty)
+            JobDuties.objects.create(job=job, duty=duty)
+        VacancyJobs.objects.create(vacancy=vacancy, job=job)
 
 
 class ListAsQuerySet(list):

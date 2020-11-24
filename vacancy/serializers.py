@@ -2,11 +2,10 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from company.serializers import CompanySerializer, CitySerializer
-from core.models import Duty
-from core.serializers import SkillSerializer, JobSerializer, JobDuties
+from core.serializers import SkillSerializer, JobSerializer
 from token_auth.serializers import UserProfileSerializer
 from .models import *
-from .utils import create_skills
+from .utils import create_vacancy_skills, create_vacancy_jobs
 
 
 class VacancyShortSerializer(ModelSerializer):
@@ -36,18 +35,32 @@ class VacancySerializer(ModelSerializer):
         jobs = validated_data.pop('jobs')
         vacancy = Vacancy.objects.create(**validated_data)
 
-        if skills is not None:
-            create_skills(skills, vacancy)
-
-        for job in jobs:
-            duties = job.pop('duties')
-            job = Job.objects.create(**job)
-            for duty in duties:
-                duty = Duty.objects.create(text=duty)
-                JobDuties.objects.create(job=job, duty=duty)
-            VacancyJobs.objects.create(vacancy=vacancy, job=job)
+        create_vacancy_skills(vacancy, skills)
+        create_vacancy_jobs(vacancy, jobs)
 
         return vacancy
+
+    def update(self, instance, validated_data):
+        skills = validated_data.pop('skills')
+        jobs = validated_data.pop('jobs')
+
+        if skills is not None:
+            create_vacancy_skills(instance, skills)
+
+        if jobs is not None:
+            create_vacancy_jobs(instance, jobs)
+
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.schedule_type = validated_data.get('schedule_type', instance.schedule_type)
+        instance.employment_type = validated_data.get('employment_type', instance.employment_type)
+        instance.approved = validated_data.get('approved', instance.approved)
+        instance.partnership = validated_data.get('partnership', instance.partnership)
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+
+        instance.save()
+
+        return instance
 
     def to_representation(self, obj):
         vacancy = super(VacancySerializer, self).to_representation(obj)

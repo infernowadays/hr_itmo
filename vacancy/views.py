@@ -90,9 +90,20 @@ class VacancyDetailView(APIView):
         vacancy = self.get_object(pk)
         serializer = VacancySerializer(vacancy, data=self.request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+
+            queryset = Company.objects.filter(id=request.data.pop('company_id'))
+            if not queryset:
+                return Response({'error': 'company not found'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                company = queryset[0]
+            serializer.save(company=company, skills=request.data.get('skills'), jobs=request.data.get('jobs'))
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        vacancy = self.get_object(pk)
+        vacancy.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class RequestListView(APIView):
