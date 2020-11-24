@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -58,3 +59,8 @@ class FormDetailView(APIView):
                             jobs=self.request.data.get('jobs'))
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        form = self.get_object(pk)
+        form.delete()
+        return Response(status=status.HTTP_200_OK)
