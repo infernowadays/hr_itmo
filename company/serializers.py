@@ -4,6 +4,7 @@ from rest_framework.serializers import ModelSerializer
 from core.serializers import CitySerializer
 from token_auth.serializers import UserProfileSerializer
 from .models import *
+from .utils import create_company_roles
 
 
 class RoleSerializer(ModelSerializer):
@@ -21,12 +22,27 @@ class CompanySerializer(ModelSerializer):
         roles = validated_data.pop('roles')
 
         company = Company.objects.create(**validated_data)
-
-        for role in roles:
-            role = Role.objects.create(**role)
-            CompanyRoles.objects.create(company=company, role=role)
+        create_company_roles(company, roles)
 
         return company
+
+    def update(self, instance, validated_data):
+        roles = validated_data.pop('roles')
+
+        if roles is not None:
+            create_company_roles(instance, roles)
+
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.logo = validated_data.get('logo', instance.logo)
+        instance.city = validated_data.get('city', instance.city)
+        instance.subject = validated_data.get('subject', instance.subject)
+        instance.state = validated_data.get('state', instance.state)
+        instance.link = validated_data.get('link', instance.link)
+
+        instance.save()
+
+        return instance
 
     def to_representation(self, obj):
         company = super(CompanySerializer, self).to_representation(obj)

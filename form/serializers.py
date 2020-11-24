@@ -49,7 +49,7 @@ class FormSerializer(ModelSerializer):
             create_form_skills(instance, skills)
 
         instance.city = validated_data.get('city', instance.city)
-        instance.photo = validated_data.get('city', instance.photo)
+        instance.photo = validated_data.get('photo', instance.photo)
 
         instance.save()
 

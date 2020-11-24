@@ -21,9 +21,9 @@ class CompanyListView(APIView):
             return Response({'detail': 'Authentication credentials were not provided.'},
                             status=status.HTTP_403_FORBIDDEN)
 
-        serializer = CompanySerializer(data=request.data)
+        serializer = CompanySerializer(data=self.request.data)
         if serializer.is_valid():
-            city = City.objects.filter(id=request.data.get('city'))[0]
+            city = City.objects.filter(id=self.request.data.get('city'))[0]
             serializer.save(profile=self.request.user, city=city)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -47,3 +47,17 @@ class CompanyDetailView(APIView):
         serializer_data = serializer.data
         serializer_data['vacancies'] = VacancySerializer(instance=company.vacancies, many=True).data
         return Response(serializer_data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk):
+        company = self.get_object(pk)
+        serializer = CompanySerializer(company, data=self.request.data, partial=True)
+        if serializer.is_valid():
+            city = City.objects.filter(id=self.request.data.get('city'))[0]
+            serializer.save(city=city)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        company = self.get_object(pk)
+        company.delete()
+        return Response(status=status.HTTP_200_OK)
