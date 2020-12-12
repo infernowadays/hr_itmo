@@ -87,6 +87,10 @@ class VacancyDetailView(APIView):
         return Response(setup_single_vacancy_display(serializer.data), status=status.HTTP_200_OK)
 
     def put(self, request, pk):
+        if request.headers.get('Authorization') is None:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         vacancy = self.get_object(pk)
         serializer = VacancySerializer(vacancy, data=self.request.data, partial=True)
         if serializer.is_valid():
@@ -101,6 +105,10 @@ class VacancyDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
+        if request.headers.get('Authorization') is None:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         vacancy = self.get_object(pk)
         vacancy.delete()
         return Response(status=status.HTTP_200_OK)

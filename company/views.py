@@ -1,7 +1,8 @@
 from django.http import Http404
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -31,7 +32,7 @@ class CompanyListView(APIView):
 
 
 class CompanyDetailView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     authentication_classes = (TokenAuthentication,)
 
     @staticmethod
@@ -46,9 +47,20 @@ class CompanyDetailView(APIView):
         serializer = CompanySerializer(company)
         serializer_data = serializer.data
         serializer_data['vacancies'] = VacancySerializer(instance=company.vacancies, many=True).data
+
+        serializer_data['is_admin'] = False
+        if request.headers.get('Authorization') is not None:
+            token = Token.objects.filter(key=request.headers.get('Authorization').replace('Token ', ''))
+            if token and token[0].user_id == company.profile.id:
+                serializer_data['is_admin'] = True
+
         return Response(serializer_data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
+        if request.headers.get('Authorization') is None:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         company = self.get_object(pk)
         serializer = CompanySerializer(company, data=self.request.data, partial=True)
         if serializer.is_valid():
@@ -58,6 +70,10 @@ class CompanyDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
+        if request.headers.get('Authorization') is None:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         company = self.get_object(pk)
         company.delete()
         return Response(status=status.HTTP_200_OK)
