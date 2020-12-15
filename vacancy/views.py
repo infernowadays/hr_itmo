@@ -44,7 +44,7 @@ class VacancyListView(APIView):
                 return Response({'error': 'company not found'}, status=status.HTTP_404_NOT_FOUND)
             else:
                 company = queryset[0]
-            serializer.save(company=company, skills=request.data.get('skills'), jobs=request.data.get('jobs'))
+            serializer.save(company=company, skills=request.data.get('skills'))
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

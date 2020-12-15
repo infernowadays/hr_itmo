@@ -10,13 +10,15 @@ from core.models import Skill
 class Vacancy(models.Model):
     name = models.CharField(max_length=128, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
+    short_description = models.TextField(null=False, blank=False)
+    salary = models.IntegerField(null=False, blank=True, default=0)
     schedule_type = models.IntegerField(null=False, blank=False)
+    experience_type = models.IntegerField(null=False, blank=False)
     employment_type = models.IntegerField(null=False, blank=False)
     approved = models.BooleanField(null=False, blank=False, default=False)
     partnership = models.TextField(null=False, blank=True)
     is_active = models.BooleanField(null=False, blank=False, default=True)
     skills = models.ManyToManyField(Skill, through='VacancySkills')
-    jobs = models.ManyToManyField(Job, through='VacancyJobs')
     company = models.ForeignKey(Company, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='vacancies')
 

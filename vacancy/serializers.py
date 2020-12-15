@@ -5,7 +5,7 @@ from company.serializers import CompanySerializer, CitySerializer
 from core.serializers import SkillSerializer, JobSerializer
 from token_auth.serializers import UserProfileSerializer
 from .models import *
-from .utils import create_vacancy_skills, create_vacancy_jobs
+from .utils import create_vacancy_skills
 
 
 class VacancyShortSerializer(ModelSerializer):
@@ -14,29 +14,27 @@ class VacancyShortSerializer(ModelSerializer):
     company_logo = serializers.CharField(source='company.logo')
     city = CitySerializer(source='company.city')
     skills = SkillSerializer(many=True, read_only=True, required=False)
-    jobs = JobSerializer(many=True)
+    # jobs = JobSerializer(many=True)
     schedule_type = serializers.CharField()
     employment_type = serializers.CharField()
 
     class Meta:
         model = Vacancy
         fields = (
-            'id', 'description', 'name', 'company_id', 'company_name', 'is_active', 'approved',
-            'company_logo', 'skills', 'jobs', 'schedule_type', 'employment_type', 'city',)
+            'id', 'description', 'short_description', 'salary', 'partnership', 'name', 'company_id', 'company_name',
+            'is_active', 'approved', 'company_logo', 'skills', 'schedule_type', 'employment_type', 'experience_type',
+            'city',)
 
 
 class VacancySerializer(ModelSerializer):
     company = CompanySerializer(read_only=True)
     skills = SkillSerializer(many=True, read_only=True, required=False)
-    jobs = JobSerializer(many=True)
 
     def create(self, validated_data):
         skills = validated_data.pop('skills')
-        jobs = validated_data.pop('jobs')
         vacancy = Vacancy.objects.create(**validated_data)
 
         create_vacancy_skills(vacancy, skills)
-        create_vacancy_jobs(vacancy, jobs)
 
         return vacancy
 
@@ -47,12 +45,12 @@ class VacancySerializer(ModelSerializer):
         if skills is not None:
             create_vacancy_skills(instance, skills)
 
-        if jobs is not None:
-            create_vacancy_jobs(instance, jobs)
-
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
+        instance.short_description = validated_data.get('short_description', instance.short_description)
+        instance.salary = validated_data.get('salary', instance.salary)
         instance.schedule_type = validated_data.get('schedule_type', instance.schedule_type)
+        instance.experience_type = validated_data.get('experience_type', instance.experience_type)
         instance.employment_type = validated_data.get('employment_type', instance.employment_type)
         instance.approved = validated_data.get('approved', instance.approved)
         instance.partnership = validated_data.get('partnership', instance.partnership)
