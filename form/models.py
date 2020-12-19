@@ -25,6 +25,13 @@ class Form(models.Model):
     jobs = models.ManyToManyField(Job, through='FormJobs')
     skills = models.ManyToManyField(Skill, through='FormSkills')
 
+    vk = models.CharField(max_length=128, null=True, blank=True)
+    telegram = models.CharField(max_length=128, null=True, blank=True)
+    facebook = models.CharField(max_length=128, null=True, blank=True)
+    linkedin = models.CharField(max_length=128, null=True, blank=True)
+    website = models.CharField(max_length=128, null=True, blank=True)
+    github = models.CharField(max_length=128, null=True, blank=True)
+
     class Meta:
         db_table = 'form'
 

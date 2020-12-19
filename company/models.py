@@ -30,6 +30,12 @@ class Company(models.Model):
     profile = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='companies')
 
+    vk = models.CharField(max_length=128, null=True, blank=True)
+    facebook = models.CharField(max_length=128, null=True, blank=True)
+    twitter = models.CharField(max_length=128, null=True, blank=True)
+    website = models.CharField(max_length=128, null=True, blank=True)
+    instagram = models.CharField(max_length=128, null=True, blank=True)
+
     class Meta:
         db_table = 'company'
 
