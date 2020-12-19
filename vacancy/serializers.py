@@ -25,7 +25,7 @@ class VacancyShortSerializer(ModelSerializer):
         fields = (
             'id', 'description', 'short_description', 'salary', 'partnership', 'name', 'company_id', 'company_name',
             'is_active', 'approved', 'company_logo', 'skills', 'schedule_type', 'employment_type', 'experience_type',
-            'city', 'views', 'is_creator', 'is_requested',)
+            'city', 'views', 'is_creator', 'is_requested', 'created',)
 
     def get_is_creator(self, obj):
         if 'is_creator' in self.context:

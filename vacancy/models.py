@@ -22,6 +22,7 @@ class Vacancy(models.Model):
     company = models.ForeignKey(Company, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='vacancies')
     views = models.IntegerField(null=False, blank=True, default=0)
+    created = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'vacancy'

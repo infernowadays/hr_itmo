@@ -162,6 +162,8 @@ class RequestListView(APIView):
             response['company_name'] = vacancies[i].company.name
             response['from_user_id'] = requests[i].user.id
             response['from_user_name'] = requests[i].user.first_name + ' ' + requests[i].user.last_name
+            response['from_user_email'] = requests[i].user.email
+            response['created'] = requests[i].created
 
             responses.append(response)
 
