@@ -1,8 +1,8 @@
 from rest_framework.serializers import ModelSerializer
 
-from core.serializers import UniversitySerializer, SpecializationSerializer
+from core.serializers import UniversitySerializer, SpecializationSerializer, JobSerializer
 from token_auth.serializers import UserProfileSerializer
-from vacancy.serializers import SkillSerializer, JobSerializer
+from vacancy.serializers import SkillSerializer
 from .utils import *
 
 

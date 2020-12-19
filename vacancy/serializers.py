@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from company.serializers import CompanySerializer, CitySerializer
-from core.serializers import SkillSerializer, JobSerializer
+from core.serializers import SkillSerializer
 from token_auth.serializers import UserProfileSerializer
 from .models import *
 from .utils import create_vacancy_skills
@@ -14,16 +14,28 @@ class VacancyShortSerializer(ModelSerializer):
     company_logo = serializers.CharField(source='company.logo')
     city = CitySerializer(source='company.city')
     skills = SkillSerializer(many=True, read_only=True, required=False)
-    # jobs = JobSerializer(many=True)
     schedule_type = serializers.CharField()
     employment_type = serializers.CharField()
+    views = serializers.IntegerField()
+    is_creator = serializers.SerializerMethodField()
+    is_requested = serializers.SerializerMethodField()
 
     class Meta:
         model = Vacancy
         fields = (
             'id', 'description', 'short_description', 'salary', 'partnership', 'name', 'company_id', 'company_name',
             'is_active', 'approved', 'company_logo', 'skills', 'schedule_type', 'employment_type', 'experience_type',
-            'city',)
+            'city', 'views', 'is_creator', 'is_requested',)
+
+    def get_is_creator(self, obj):
+        if 'is_creator' in self.context:
+            return self.context.get('is_creator')
+        return False
+
+    def get_is_requested(self, obj):
+        if 'is_requested' in self.context:
+            return self.context.get('is_requested')
+        return False
 
 
 class VacancySerializer(ModelSerializer):
@@ -40,7 +52,6 @@ class VacancySerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         skills = validated_data.pop('skills')
-        jobs = validated_data.pop('jobs')
 
         if skills is not None:
             create_vacancy_skills(instance, skills)

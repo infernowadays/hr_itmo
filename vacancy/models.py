@@ -1,10 +1,10 @@
 from django.db import models
 
 from company.models import Company
+from core.models import Skill
 from form.models import Job
 from token_auth.models import UserProfile
 from .enums import *
-from core.models import Skill
 
 
 class Vacancy(models.Model):
@@ -21,6 +21,7 @@ class Vacancy(models.Model):
     skills = models.ManyToManyField(Skill, through='VacancySkills')
     company = models.ForeignKey(Company, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='vacancies')
+    views = models.IntegerField(null=False, blank=True, default=0)
 
     class Meta:
         db_table = 'vacancy'
