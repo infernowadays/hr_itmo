@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from core.serializers import FileSerializer
 from .serializers import *
 
 
@@ -64,3 +64,27 @@ class FormDetailView(APIView):
         form = self.get_object(pk)
         form.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class UploadPhotoView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    @staticmethod
+    def get_object(pk):
+        try:
+            return Form.objects.get(pk=pk)
+        except Form.DoesNotExist:
+            raise Http404
+
+    def post(self, request, pk):
+        serializer = FileSerializer(data=request.data)
+        if serializer.is_valid():
+            file = serializer.save()
+
+            form = self.get_object(pk)
+            form.photo = file.file
+            form.save()
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

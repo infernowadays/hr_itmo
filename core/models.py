@@ -1,3 +1,6 @@
+import datetime
+import os
+
 from django.db import models
 
 
@@ -61,3 +64,17 @@ class Landing(models.Model):
 
     class Meta:
         db_table = 'landing'
+
+
+def get_path_for_file(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = '{}.{}'.format(datetime.datetime.now(), ext)
+    return os.path.join(filename)
+
+
+class File(models.Model):
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    file = models.FileField(upload_to=get_path_for_file)
+
+    class Meta:
+        db_table = 'file'

@@ -48,3 +48,10 @@ class LandingSerializer(ModelSerializer):
     class Meta:
         model = Landing
         fields = '__all__'
+
+
+
+class FileSerializer(ModelSerializer):
+    class Meta:
+        model = File
+        fields = '__all__'

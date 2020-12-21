@@ -2,12 +2,13 @@ from django.http import Http404
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from vacancy.serializers import VacancySerializer
 from .serializers import *
+from core.serializers import FileSerializer
 
 
 class CompanyListView(APIView):
@@ -26,6 +27,30 @@ class CompanyListView(APIView):
         if serializer.is_valid():
             city = City.objects.filter(id=self.request.data.get('city'))[0]
             serializer.save(profile=self.request.user, city=city)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadLogoView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    @staticmethod
+    def get_object(pk):
+        try:
+            return Company.objects.get(pk=pk)
+        except Company.DoesNotExist:
+            raise Http404
+
+    def post(self, request, pk):
+        serializer = FileSerializer(data=request.data)
+        if serializer.is_valid():
+            file = serializer.save()
+
+            company = self.get_object(pk)
+            company.logo = file.file
+            company.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
