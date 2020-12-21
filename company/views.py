@@ -6,9 +6,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.serializers import FileSerializer
 from vacancy.serializers import VacancySerializer
 from .serializers import *
-from core.serializers import FileSerializer
 
 
 class CompanyListView(APIView):
@@ -28,6 +28,18 @@ class CompanyListView(APIView):
             city = City.objects.filter(id=self.request.data.get('city'))[0]
             serializer.save(profile=self.request.user, city=city)
 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadRolePhotoView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def post(self, request):
+        serializer = FileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
