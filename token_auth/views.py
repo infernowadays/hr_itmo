@@ -61,7 +61,7 @@ class MyProfileView(APIView):
         serializer_data['form'] = {} if not form else FormSerializer(form[0]).data
 
         companies = Company.objects.filter(profile=self.request.user)
-        serializer_data['companies'] = {} if not companies else CompanySerializer(instance=companies, many=True).data
+        serializer_data['companies'] = [] if not companies else CompanySerializer(instance=companies, many=True).data
 
         return Response(serializer_data, status=status.HTTP_200_OK)
 
