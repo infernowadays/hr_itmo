@@ -136,38 +136,54 @@ class RequestListView(APIView):
 
     def get(self, request):
         roles = list([])
+
+        company_id = None
+        if request.GET.get('id'):
+            company_id = request.GET.get('id')
+
         if not request.GET.getlist('me'):
             roles.append('creator')
             roles.append('member')
         else:
             roles = request.GET.getlist('me')
 
-        q = Q()
-        q = q & filter_by_request_types(list_roles=roles, user=request.user)
-
-        requests = Request.objects.filter(q)
-        vacancies = Vacancy.objects.filter(id__in=requests.values_list('vacancy_id', flat=True)).distinct()
-
         responses = list([])
-        for i in range(len(vacancies)):
-            response = dict({})
-            response['vacancy_id'] = vacancies[i].id
-            response['vacancy_name'] = vacancies[i].name
-            response['vacancy_description'] = vacancies[i].description
-            response['response_id'] = requests[i].id
-            response['response_decision'] = requests[i].decision
-            response['response_seen'] = requests[i].seen
-            response['company_id'] = vacancies[i].company.id
-            response['company_logo'] = vacancies[i].company.logo
-            response['company_name'] = vacancies[i].company.name
-            response['from_user_id'] = requests[i].user.id
-            response['from_user_name'] = requests[i].user.first_name + ' ' + requests[i].user.last_name
-            response['from_user_email'] = requests[i].user.email
-            response['created'] = requests[i].created
 
-            responses.append(response)
+        if company_id is None:
+            q = Q()
+            q = q & filter_by_request_types(list_roles=roles, user=request.user)
+            requests = Request.objects.filter(q)
+
+            for i in range(len(requests)):
+                responses.append(self.set_invitations(requests[i]))
+
+        else:
+            requests = Request.objects.filter(
+                vacancy_id__in=Vacancy.objects.filter(company_id=company_id).values_list('id', flat=True)).distinct()
+
+            for i in range(len(requests)):
+                responses.append(self.set_invitations(requests[i]))
 
         return Response(responses, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def set_invitations(request):
+        response = dict({})
+        response['vacancy_id'] = request.vacancy.id
+        response['vacancy_name'] = request.vacancy.name
+        response['vacancy_description'] = request.vacancy.description
+        response['response_id'] = request.id
+        response['response_decision'] = request.decision
+        response['response_seen'] = request.seen
+        response['company_id'] = request.vacancy.company.id
+        response['company_logo'] = request.vacancy.company.logo
+        response['company_name'] = request.vacancy.company.name
+        response['from_user_id'] = request.user.id
+        response['from_user_name'] = request.user.first_name + ' ' + request.user.last_name
+        response['from_user_email'] = request.user.email
+        response['created'] = request.created
+
+        return response
 
 
 class RespondRequestView(APIView):
