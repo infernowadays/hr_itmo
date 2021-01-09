@@ -24,6 +24,10 @@ class Vacancy(models.Model):
     views = models.IntegerField(null=False, blank=True, default=0)
     created = models.DateTimeField(auto_now=True)
 
+    pixel_id = models.TextField(null=True, blank=True)
+    vk = models.CharField(max_length=128, null=True, blank=True)
+    instagram = models.CharField(max_length=128, null=True, blank=True)
+
     class Meta:
         db_table = 'vacancy'
 
