@@ -119,7 +119,8 @@ class VacancyDetailView(APIView):
                             status=status.HTTP_401_UNAUTHORIZED)
 
         vacancy = self.get_object(pk)
-        vacancy.delete()
+        vacancy.is_active = False
+        vacancy.save()
         return Response(status=status.HTTP_200_OK)
 
 
