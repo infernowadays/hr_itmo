@@ -91,7 +91,7 @@ def create_vacancy_skills(vacancy, skills):
         skill = Skill.objects.filter(text=string_skill.get('text'))
 
         if not skill:
-            skill = Skill.objects.create(id=string_skill.get('id'), text=string_skill.get('text'))
+            skill = Skill.objects.create(text=string_skill.get('text'))
         else:
             skill = skill.get()
 
