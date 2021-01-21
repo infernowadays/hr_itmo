@@ -19,6 +19,14 @@ class VacancyListView(APIView):
         q = q & filter_by_text(request.GET.get('text'))
         q = q & filter_by_experience_type(request.GET.get('experience_type'))
 
+        limit = 20
+        if request.GET.get('limit'):
+            limit = request.GET.get('limit')
+
+        offset = 0
+        if request.GET.get('offset'):
+            offset = request.GET.get('offset')
+
         if request.GET.get('company'):
             company = Company.objects.filter(pk=request.GET.get('company'))
         else:
@@ -27,7 +35,7 @@ class VacancyListView(APIView):
         if company:
             q = q & Q(company=company[0])
 
-        vacancies = list(Vacancy.objects.filter(q).distinct().order_by('id'))
+        vacancies = list(Vacancy.objects.filter(q).distinct().order_by('id')[int(offset): int(offset) + int(limit)])
         serializer = VacancyShortSerializer(vacancies, many=True)
 
         return Response(setup_vacancy_display(serializer.data), status=status.HTTP_200_OK)
