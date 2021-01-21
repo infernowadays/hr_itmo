@@ -7,8 +7,9 @@ from .enums import *
 
 
 class UserProfileManager(BaseUserManager):
-    def create_user(self, email, first_name, last_name, date_of_birth, sex, telegram=None, password=None):
+    def create_user(self, email, first_name, last_name, date_of_birth, sex, telegram=None, photo=None, password=None):
         telegram = '' if telegram is None else telegram
+        photo = '' if photo is None else photo
 
         user = self.model(
             email=self.normalize_email(email),
@@ -16,7 +17,8 @@ class UserProfileManager(BaseUserManager):
             last_name=last_name,
             date_of_birth=date_of_birth,
             sex=sex,
-            telegram=telegram
+            telegram=telegram,
+            photo=photo
         )
 
         user.set_password(password)
@@ -45,6 +47,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     date_of_birth = models.DateField(null=False, blank=False)
     sex = models.CharField(null=False, blank=False, max_length=16, choices=Sex.choices())
     telegram = models.CharField(max_length=128, blank=True)
+    photo = models.TextField(blank=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

@@ -19,7 +19,6 @@ class Form(models.Model):
     city = models.CharField(max_length=128, null=False, blank=False)
     profile = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='form')
-    photo = models.TextField(blank=True)
 
     educations = models.ManyToManyField(Education, through='FormEducations', blank=True)
     jobs = models.ManyToManyField(Job, through='FormJobs')

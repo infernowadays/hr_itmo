@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from company.models import Company
 from company.serializers import CompanySerializer
+from core.serializers import FileSerializer
 from form.models import Form
 from form.serializers import FormSerializer
 from .serializers import *
@@ -70,5 +71,29 @@ class MyProfileView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadPhotoView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    @staticmethod
+    def get_object(pk):
+        try:
+            return UserProfile.objects.get(pk=pk)
+        except UserProfile.DoesNotExist:
+            raise Http404
+
+    def post(self, request, pk):
+        serializer = FileSerializer(data=request.data)
+        if serializer.is_valid():
+            file = serializer.save()
+
+            user = self.get_object(pk)
+            user.photo = file.file
+            user.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

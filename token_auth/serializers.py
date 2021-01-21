@@ -5,8 +5,6 @@ from rest_framework.serializers import ModelSerializer, Serializer
 from .models import UserProfile
 
 
-# from form.serializers import FormSerializer
-
 class TokenSerializer(ModelSerializer):
     user = UserProfile
 
