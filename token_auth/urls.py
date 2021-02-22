@@ -9,4 +9,5 @@ urlpatterns = [
     path('users/me/', csrf_exempt(views.MyProfileView.as_view())),
     path('users/<int:pk>/photo/', csrf_exempt(views.UploadPhotoView.as_view())),
     path('auth/vk/', csrf_exempt(views.OAuthVKView.as_view())),
+    path('auth/vk/code/', csrf_exempt(views.GetAccessTokenView.as_view())),
 ]

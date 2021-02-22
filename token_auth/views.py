@@ -1,3 +1,4 @@
+import requests
 from django.contrib.auth import authenticate
 from django.http import Http404
 from rest_framework import status
@@ -6,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+import json
 from company.models import Company
 from company.serializers import CompanySerializer
 from core.serializers import FileSerializer
@@ -113,6 +114,42 @@ class OAuthVKView(APIView):
         user_json = None
         if response.get('response') is not None:
             user_json = get_json_user(response.get('response'), validated_data['email'])
+        elif response.get('error') is not None:
+            return Response({'error': response.get('error').get('error_msg')}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = UserProfileSerializer(data=user_json)
+        if serializer.is_valid():
+            user = serializer.save()
+
+            if not user:
+                raise Http404
+            token, _ = Token.objects.get_or_create(user=user)
+
+            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetAccessTokenView(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        payload = {
+            'client_id': '7769567',
+            'client_secret': 'vETYNFhsP9wk1Dt8LzxK',
+            'code': request.data.get('code')
+        }
+
+        app_url = 'https://oauth.vk.com/access_token'
+        response = requests.get(app_url, params=payload)
+        json_response = response.content.decode('utf8').replace("'", '"')
+        access_token = json.loads(json_response).get('access_token')
+        email = json.loads(json_response).get('email')
+
+        response = get_profile_info(access_token)
+
+        user_json = None
+        if response.get('response') is not None:
+            user_json = get_json_user(response.get('response'), email)
         elif response.get('error') is not None:
             return Response({'error': response.get('error').get('error_msg')}, status=status.HTTP_401_UNAUTHORIZED)
 
