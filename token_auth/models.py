@@ -30,6 +30,10 @@ class UserProfileManager(BaseUserManager):
             email=self.normalize_email(email),
             first_name=first_name,
             last_name=last_name,
+            date_of_birth='1900-01-01',
+            sex='',
+            telegram='',
+            photo=''
         )
 
         user.set_password(password)

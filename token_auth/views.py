@@ -13,6 +13,7 @@ from core.serializers import FileSerializer
 from form.models import Form
 from form.serializers import FormSerializer
 from .serializers import *
+from .utils import get_json_user, get_profile_info
 
 
 class SignUpView(APIView):
@@ -96,4 +97,32 @@ class UploadPhotoView(APIView):
             user.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OAuthVKView(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = VKOAuthCredentialsSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+        access_token = validated_data['access_token']
+        response = get_profile_info(access_token)
+
+        user_json = None
+        if response.get('response') is not None:
+            user_json = get_json_user(response.get('response'), validated_data['email'])
+        elif response.get('error') is not None:
+            return Response({'error': response.get('error').get('error_msg')}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = UserProfileSerializer(data=user_json)
+        if serializer.is_valid():
+            user = serializer.save()
+
+            if not user:
+                raise Http404
+            token, _ = Token.objects.get_or_create(user=user)
+
+            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

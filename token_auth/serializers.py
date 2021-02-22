@@ -46,3 +46,8 @@ class UserProfileShortSerializer(ModelSerializer):
 class AuthCredentialsSerializers(Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True)
+
+
+class VKOAuthCredentialsSerializers(Serializer):
+    email = serializers.EmailField(required=True)
+    access_token = serializers.CharField(required=True)
