@@ -3,6 +3,7 @@ import json
 import secrets
 
 import requests
+from django.conf import settings
 
 from .enums import Sex
 
@@ -41,3 +42,18 @@ def get_profile_info(access_token):
     response = requests.get(app_url, params=payload)
     json_response = response.content.decode('utf8').replace("'", '"')
     return json.loads(json_response)
+
+
+def get_access_token_and_email(code):
+    payload = {
+        'client_id': settings.OAUTH_VK_CLIENT_ID,
+        'client_secret': settings.OAUTH_VK_CLIENT_SECRET,
+        'code': code
+    }
+
+    app_url = 'https://oauth.vk.com/access_token'
+    response = requests.get(app_url, params=payload)
+    json_response = response.content.decode('utf8').replace("'", '"')
+    access_token = json.loads(json_response).get('access_token')
+    email = json.loads(json_response).get('email')
+    return access_token, email

@@ -48,6 +48,5 @@ class AuthCredentialsSerializers(Serializer):
     password = serializers.CharField(required=True)
 
 
-class VKOAuthCredentialsSerializers(Serializer):
-    email = serializers.EmailField(required=True)
-    access_token = serializers.CharField(required=True)
+class VKCodeSerializers(Serializer):
+    code = serializers.CharField(required=True)
