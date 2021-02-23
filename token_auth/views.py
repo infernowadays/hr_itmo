@@ -116,7 +116,7 @@ class OAuthVKView(APIView):
         response = get_profile_info(access_token, user_id)
         user_json = None
         if response.get('response') is not None:
-            user_json = get_json_user(response.get('response'), email)
+            user_json = get_json_user(response.get('response')[0], email)
         elif response.get('error') is not None:
             return Response({'error': response.get('error').get('error_msg')}, status=status.HTTP_401_UNAUTHORIZED)
 
