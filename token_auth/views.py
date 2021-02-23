@@ -122,7 +122,11 @@ class OAuthVKView(APIView):
 
         serializer = UserProfileSerializer(data=user_json)
         if serializer.is_valid():
-            user = serializer.save()
+            user = UserProfile.objects.filter(email=email)
+            if not user:
+                user = serializer.save()
+            else:
+                user = user[0]
 
             if not user:
                 raise Http404
