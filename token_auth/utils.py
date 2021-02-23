@@ -48,7 +48,7 @@ def get_access_token_and_email(code):
     payload = {
         'client_id': settings.OAUTH_VK_CLIENT_ID,
         'client_secret': settings.OAUTH_VK_CLIENT_SECRET,
-        'redirect_uri': 'http://findfound.me/login',
+        'redirect_uri': 'https://findfound.me/login',
         'code': code
     }
 
