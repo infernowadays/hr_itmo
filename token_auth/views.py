@@ -103,6 +103,13 @@ class UploadPhotoView(APIView):
 class OAuthVKView(APIView):
     permission_classes = (AllowAny,)
 
+    @staticmethod
+    def get_token(user):
+        if not user:
+            raise Http404
+        token, _ = Token.objects.get_or_create(user=user)
+        return token.key
+
     def post(self, request):
         serializer = VKCodeSerializers(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -120,17 +127,14 @@ class OAuthVKView(APIView):
         elif response.get('error') is not None:
             return Response({'error': response.get('error').get('error_msg')}, status=status.HTTP_401_UNAUTHORIZED)
 
-        serializer = UserProfileSerializer(data=user_json)
-        if serializer.is_valid():
-            user = UserProfile.objects.filter(email=email)
-            if not user:
+        user = UserProfile.objects.filter(email=email)
+        if not user:
+            serializer = UserProfileSerializer(data=user_json)
+            if serializer.is_valid():
                 user = serializer.save()
             else:
-                user = user[0]
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user = user[0]
 
-            if not user:
-                raise Http404
-            token, _ = Token.objects.get_or_create(user=user)
-
-            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'token': self.get_token(user)}, status=status.HTTP_201_CREATED)
