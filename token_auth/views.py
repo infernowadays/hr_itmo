@@ -109,11 +109,11 @@ class OAuthVKView(APIView):
         validated_data = serializer.validated_data
         code = validated_data['code']
 
-        access_token, email = get_access_token_and_email(code)
+        access_token, email, user_id = get_access_token_and_email(code)
         if access_token is None:
             return Response({'error': 'code is expired or invalid'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        response = get_profile_info(access_token)
+        response = get_profile_info(access_token, user_id)
         user_json = None
         if response.get('response') is not None:
             user_json = get_json_user(response.get('response'), email)

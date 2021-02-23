@@ -32,13 +32,15 @@ def get_date(date):
     return datetime.datetime.strptime(date, '%d.%m.%Y').strftime('%Y-%m-%d')
 
 
-def get_profile_info(access_token):
+def get_profile_info(access_token, user_id):
     payload = {
         'access_token': access_token,
         'v': '5.130',
+        'user_ids': user_id,
+        'fields': 'bdate, sex'
     }
 
-    app_url = 'https://api.vk.com/method/account.getProfileInfo'
+    app_url = 'https://api.vk.com/method/users.get'
     response = requests.get(app_url, params=payload)
     json_response = response.content.decode('utf8').replace("'", '"')
     return json.loads(json_response)
@@ -57,4 +59,5 @@ def get_access_token_and_email(code):
     json_response = response.content.decode('utf8').replace("'", '"')
     access_token = json.loads(json_response).get('access_token')
     email = json.loads(json_response).get('email')
-    return access_token, email
+    user_id = json.loads(json_response).get('user_id')
+    return access_token, email, user_id
