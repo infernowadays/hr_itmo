@@ -15,7 +15,7 @@ class CompanyListView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        serializer = CompanySerializer(Company.objects.all(), many=True)
+        serializer = CompanySerializer(Company.objects.filter(is_external=False), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):

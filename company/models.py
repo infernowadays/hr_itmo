@@ -37,6 +37,7 @@ class Company(models.Model):
     instagram = models.CharField(max_length=128, null=True, blank=True)
 
     url = models.CharField(max_length=128, null=False, blank=True)
+    is_external = models.BooleanField(null=False, blank=True, default=False)
 
     class Meta:
         db_table = 'company'
