@@ -36,6 +36,8 @@ class Company(models.Model):
     website = models.CharField(max_length=128, null=True, blank=True)
     instagram = models.CharField(max_length=128, null=True, blank=True)
 
+    url = models.CharField(max_length=128, null=False, blank=True)
+
     class Meta:
         db_table = 'company'
 

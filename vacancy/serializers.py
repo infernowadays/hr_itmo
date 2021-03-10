@@ -12,6 +12,7 @@ class VacancyShortSerializer(ModelSerializer):
     company_id = serializers.CharField(source='company.id')
     company_name = serializers.CharField(source='company.name')
     company_logo = serializers.CharField(source='company.logo')
+    company_url = serializers.CharField(source='company.url')
     city = CitySerializer(source='company.city')
     skills = SkillSerializer(many=True, read_only=True, required=False)
     schedule_type = serializers.CharField()
@@ -23,9 +24,10 @@ class VacancyShortSerializer(ModelSerializer):
     class Meta:
         model = Vacancy
         fields = (
-            'id', 'description', 'short_description', 'salary', 'partnership', 'name', 'company_id', 'company_name',
-            'is_active', 'approved', 'company_logo', 'skills', 'schedule_type', 'employment_type', 'experience_type',
-            'city', 'views', 'is_creator', 'is_requested', 'created', 'pixel_id', 'vk', 'instagram',)
+            'id', 'description', 'short_description', 'url', 'salary', 'partnership', 'name', 'company_id',
+            'company_name', 'company_url', 'is_active', 'approved', 'company_logo', 'skills', 'schedule_type',
+            'employment_type', 'experience_type', 'city', 'views', 'is_creator', 'is_requested', 'created', 'pixel_id',
+            'vk', 'instagram', 'is_external',)
 
     def get_is_creator(self, obj):
         if 'is_creator' in self.context:
