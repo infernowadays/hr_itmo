@@ -23,7 +23,7 @@ class Company(models.Model):
                              related_name='companies')
 
     subject = models.TextField(null=False, blank=False)
-    state = models.TextField(null=False, blank=False)
+    state = models.TextField(null=True, blank=True)
     link = models.CharField(max_length=256, null=False, blank=True)
     roles = models.ManyToManyField(Role, through='CompanyRoles')
 
