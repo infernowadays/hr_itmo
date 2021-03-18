@@ -15,7 +15,8 @@ class VacancyListView(APIView):
 
     def get(self, request):
 
-        q = Q() | filter_by_skills(request.GET.get('skill'))
+        q = Q(is_active=True)
+        q = q & filter_by_skills(request.GET.get('skill'))
         q = q & filter_by_text(request.GET.get('text'))
         q = q & filter_by_experience_type(request.GET.get('experience_type'))
 
