@@ -36,7 +36,7 @@ class VacancyListView(APIView):
         if company:
             q = q & Q(company=company[0])
 
-        vacancies = list(Vacancy.objects.filter(q).distinct().order_by('id')[int(offset): int(offset) + int(limit)])
+        vacancies = list(Vacancy.objects.filter(q).distinct().order_by('-created')[int(offset): int(offset) + int(limit)])
         serializer = VacancyShortSerializer(vacancies, many=True)
 
         return Response(setup_vacancy_display(serializer.data), status=status.HTTP_200_OK)
