@@ -16,7 +16,7 @@ class Education(models.Model):
 
 
 class Form(models.Model):
-    city = models.CharField(max_length=128, null=False, blank=False)
+    city = models.CharField(max_length=128, null=True, blank=True)
     profile = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='form')
 

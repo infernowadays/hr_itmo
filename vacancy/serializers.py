@@ -26,8 +26,8 @@ class VacancyShortSerializer(ModelSerializer):
         fields = (
             'id', 'description', 'short_description', 'url', 'salary', 'partnership', 'name', 'company_id',
             'company_name', 'company_url', 'is_active', 'approved', 'company_logo', 'skills', 'schedule_type',
-            'employment_type', 'experience_type', 'city', 'views', 'is_creator', 'is_requested', 'created', 'pixel_id',
-            'vk', 'instagram', 'is_external',)
+            'employment_type', 'experience_type', 'city', 'views', 'is_creator', 'is_requested', 'created',
+            'is_external',)
 
     def get_is_creator(self, obj):
         if 'is_creator' in self.context:
@@ -68,9 +68,6 @@ class VacancySerializer(ModelSerializer):
         instance.approved = validated_data.get('approved', instance.approved)
         instance.partnership = validated_data.get('partnership', instance.partnership)
         instance.is_active = validated_data.get('is_active', instance.is_active)
-        instance.pixel_id = validated_data.get('pixel_id', instance.pixel_id)
-        instance.vk = validated_data.get('vk', instance.vk)
-        instance.instagram = validated_data.get('instagram', instance.instagram)
 
         instance.save()
 
@@ -85,6 +82,14 @@ class VacancySerializer(ModelSerializer):
     class Meta:
         model = Vacancy
         fields = '__all__'
+        extra_kwargs = {
+            "name": {"error_messages": {"required": "заголовок"}},
+            "short_description": {"error_messages": {"required": "о вакансии"}},
+            "description": {"error_messages": {"required": "описание"}},
+            "experience_type": {"error_messages": {"required": "опыт работы"}},
+            "employment_type": {"error_messages": {"required": "тип занятности"}},
+            "schedule_type": {"error_messages": {"required": "график работы"}},
+        }
 
 
 class FavouriteVacancySerializer(ModelSerializer):

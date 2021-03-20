@@ -19,11 +19,11 @@ class Company(models.Model):
     description = models.TextField(null=False, blank=False)
     logo = models.TextField(null=False, blank=True)
 
-    city = models.ForeignKey(City, null=False, blank=False, db_constraint=True, on_delete=models.CASCADE,
+    city = models.ForeignKey(City, null=True, blank=True, db_constraint=True, on_delete=models.CASCADE,
                              related_name='companies')
 
     subject = models.TextField(null=False, blank=False)
-    state = models.TextField(null=True, blank=True)
+    state = models.TextField(null=False, blank=False)
     link = models.CharField(max_length=256, null=False, blank=True)
     roles = models.ManyToManyField(Role, through='CompanyRoles')
 

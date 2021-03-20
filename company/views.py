@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.serializers import FileSerializer
+from core.utils import *
 from vacancy.serializers import VacancySerializer
 from .serializers import *
 
@@ -25,11 +26,14 @@ class CompanyListView(APIView):
 
         serializer = CompanySerializer(data=self.request.data)
         if serializer.is_valid():
-            city = City.objects.filter(id=self.request.data.get('city'))[0]
+            city = None
+            if self.request.data.get('city'):
+                city = City.objects.filter(id=self.request.data.get('city'))[0]
             serializer.save(profile=self.request.user, city=city)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(handle_serializer_errors(Company, serializer.errors), status=status.HTTP_400_BAD_REQUEST,
+                        content_type="text/plain")
 
 
 class UploadRolePhotoView(APIView):

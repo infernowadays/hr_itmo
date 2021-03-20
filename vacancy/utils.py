@@ -28,10 +28,10 @@ def filter_by_request_types(list_roles, user):
     return q
 
 
-def filter_by_skills(list_skills):
-    if list_skills:
-        skills = Skill.objects.filter(id__in=list_skills).values_list('id', flat=True)
-        return Q(skills__in=skills)
+def filter_by_skills(skill_id):
+    if skill_id:
+        skill = Skill.objects.filter(id=skill_id).values_list('id', flat=True)
+        return Q(skills__in=skill)
     else:
         return Q()
 

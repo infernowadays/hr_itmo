@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.utils import *
 from .serializers import *
 from .utils import *
 
@@ -36,7 +37,8 @@ class VacancyListView(APIView):
         if company:
             q = q & Q(company=company[0])
 
-        vacancies = list(Vacancy.objects.filter(q).distinct().order_by('-created')[int(offset): int(offset) + int(limit)])
+        vacancies = list(
+            Vacancy.objects.filter(q).distinct().order_by('-created')[int(offset): int(offset) + int(limit)])
         serializer = VacancyShortSerializer(vacancies, many=True)
 
         return Response(setup_vacancy_display(serializer.data), status=status.HTTP_200_OK)
@@ -48,7 +50,6 @@ class VacancyListView(APIView):
 
         serializer = VacancySerializer(data=request.data)
         if serializer.is_valid():
-
             queryset = Company.objects.filter(id=request.data.pop('company_id'))
             if not queryset:
                 return Response({'error': 'company not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -57,7 +58,8 @@ class VacancyListView(APIView):
             serializer.save(company=company, skills=request.data.get('skills'))
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(handle_serializer_errors(Vacancy, serializer.errors), status=status.HTTP_400_BAD_REQUEST,
+                        content_type="text/plain")
 
 
 class FavouriteVacancyListView(APIView):

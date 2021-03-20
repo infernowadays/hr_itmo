@@ -10,23 +10,21 @@ from .enums import *
 class Vacancy(models.Model):
     name = models.CharField(max_length=128, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
-    short_description = models.TextField(null=True, blank=True)
-    salary = models.IntegerField(null=False, blank=True, default=0)
+    short_description = models.TextField(null=False, blank=False, )
     schedule_type = models.IntegerField(null=False, blank=False)
     experience_type = models.IntegerField(null=False, blank=False)
     employment_type = models.IntegerField(null=False, blank=False)
+    skills = models.ManyToManyField(Skill, through='VacancySkills')
+
+    salary = models.IntegerField(null=False, blank=True, default=0)
     approved = models.BooleanField(null=False, blank=False, default=False)
     partnership = models.TextField(null=False, blank=True)
     is_active = models.BooleanField(null=False, blank=False, default=True)
-    skills = models.ManyToManyField(Skill, through='VacancySkills')
+
     company = models.ForeignKey(Company, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='vacancies')
     views = models.IntegerField(null=False, blank=True, default=0)
     created = models.DateTimeField(auto_now=True)
-
-    pixel_id = models.TextField(null=True, blank=True)
-    vk = models.CharField(max_length=128, null=True, blank=True)
-    instagram = models.CharField(max_length=128, null=True, blank=True)
 
     url = models.CharField(max_length=128, null=False, blank=True)
     is_external = models.BooleanField(null=False, blank=True, default=False)

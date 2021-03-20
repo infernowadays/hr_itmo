@@ -53,6 +53,12 @@ class CompanySerializer(ModelSerializer):
     class Meta:
         model = Company
         fields = '__all__'
+        extra_kwargs = {
+            "name": {"error_messages": {"required": "название"}},
+            "description": {"error_messages": {"required": "описание"}},
+            "subject": {"error_messages": {"required": "отрасль"}},
+            "state": {"error_messages": {"required": "стадия"}},
+        }
 
 
 class CompanyShortSerializer(ModelSerializer):
