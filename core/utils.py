@@ -1,5 +1,5 @@
 def handle_serializer_errors(model, errors):
-    error_message = "Поля, обязательные для заполенения: "
+    error_message = "Поля, обязательные для заполнения: "
     empty = True
     for error in errors:
         for field in model._meta.fields:

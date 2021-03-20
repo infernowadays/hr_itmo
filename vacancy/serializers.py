@@ -83,12 +83,12 @@ class VacancySerializer(ModelSerializer):
         model = Vacancy
         fields = '__all__'
         extra_kwargs = {
-            "name": {"error_messages": {"required": "заголовок"}},
-            "short_description": {"error_messages": {"required": "о вакансии"}},
-            "description": {"error_messages": {"required": "описание"}},
-            "experience_type": {"error_messages": {"required": "опыт работы"}},
-            "employment_type": {"error_messages": {"required": "тип занятности"}},
-            "schedule_type": {"error_messages": {"required": "график работы"}},
+            "name": {"error_messages": {"required": "заголовок", "null": "заголовок"}},
+            "short_description": {"error_messages": {"required": "о вакансии", "null": "о вакансии"}},
+            "description": {"error_messages": {"required": "описание", "null": "описание"}},
+            "experience_type": {"error_messages": {"required": "опыт работы", "null": "опыт работы"}},
+            "employment_type": {"error_messages": {"required": "тип занятности"}}, "null": "тип занятности",
+            "schedule_type": {"error_messages": {"required": "график работы", "null": "график работы"}},
         }
 
 
