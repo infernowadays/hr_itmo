@@ -28,9 +28,9 @@ def filter_by_request_types(list_roles, user):
     return q
 
 
-def filter_by_skills(skill_id):
-    if skill_id:
-        skill = Skill.objects.filter(id=skill_id).values_list('id', flat=True)
+def filter_by_skills(skill_text):
+    if skill_text:
+        skill = Skill.objects.filter(text__contains=skill_text.lower()).values_list('id', flat=True)
         return Q(skills__in=skill)
     else:
         return Q()
