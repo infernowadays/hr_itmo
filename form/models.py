@@ -20,7 +20,7 @@ class Form(models.Model):
     profile = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='form')
 
-    about = models.TextField(null=False, blank=False)
+    about = models.TextField(null=True, blank=True)
     educations = models.ManyToManyField(Education, through='FormEducations', blank=True)
     jobs = models.ManyToManyField(Job, through='FormJobs')
     skills = models.ManyToManyField(Skill, through='FormSkills')
