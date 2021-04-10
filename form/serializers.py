@@ -50,6 +50,7 @@ class FormSerializer(ModelSerializer):
 
         instance.city = validated_data.get('city', instance.city)
         instance.photo = validated_data.get('photo', instance.photo)
+        instance.about = validated_data.get('about', instance.about)
 
         instance.save()
 

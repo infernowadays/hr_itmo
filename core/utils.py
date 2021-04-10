@@ -2,6 +2,9 @@ import json
 
 import requests
 
+from company.models import Category
+from core.models import City
+
 
 def handle_serializer_errors(model, errors):
     error_message = "Поля, обязательные для заполнения: "
@@ -24,3 +27,21 @@ def get_hh_skills(text):
     if items is not None and len(items) > 0:
         return items[0].get('text')
     return ''
+
+
+def get_city(city_request):
+    if city_request:
+        city = City.objects.filter(id=city_request)
+        if len(city) > 0:
+            return city[0]
+        else:
+            return None
+
+
+def get_category(category_request):
+    if category_request:
+        category = Category.objects.filter(id=category_request)
+        if len(category) > 0:
+            return category[0]
+        else:
+            return None

@@ -13,9 +13,16 @@ class RoleSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class CategorySerializer(ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+
 class CompanySerializer(ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
     roles = RoleSerializer(many=True)
+    category = CategorySerializer(read_only=True)
     city = CitySerializer(read_only=True)
 
     def create(self, validated_data):
@@ -36,6 +43,7 @@ class CompanySerializer(ModelSerializer):
         instance.description = validated_data.get('description', instance.description)
         instance.logo = validated_data.get('logo', instance.logo)
         instance.city = validated_data.get('city', instance.city)
+        instance.category = validated_data.get('category', instance.category)
         instance.subject = validated_data.get('subject', instance.subject)
         instance.state = validated_data.get('state', instance.state)
         instance.link = validated_data.get('link', instance.link)

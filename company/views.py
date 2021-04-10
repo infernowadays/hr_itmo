@@ -26,10 +26,10 @@ class CompanyListView(APIView):
 
         serializer = CompanySerializer(data=self.request.data)
         if serializer.is_valid():
-            city = None
-            if self.request.data.get('city'):
-                city = City.objects.filter(id=self.request.data.get('city'))[0]
-            serializer.save(profile=self.request.user, city=city)
+            city = get_city(self.request.data.get('city'))
+            category = get_category(self.request.data.get('category'))
+
+            serializer.save(profile=self.request.user, city=city, category=category)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(handle_serializer_errors(Company, serializer.errors), status=status.HTTP_400_BAD_REQUEST,

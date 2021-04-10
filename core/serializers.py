@@ -50,7 +50,6 @@ class LandingSerializer(ModelSerializer):
         fields = '__all__'
 
 
-
 class FileSerializer(ModelSerializer):
     class Meta:
         model = File

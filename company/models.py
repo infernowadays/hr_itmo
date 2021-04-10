@@ -14,6 +14,13 @@ class Role(models.Model):
         db_table = 'role'
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=256, null=False, blank=False)
+
+    class Meta:
+        db_table = 'category'
+
+
 class Company(models.Model):
     name = models.CharField(max_length=128, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
@@ -26,16 +33,15 @@ class Company(models.Model):
     state = models.TextField(null=False, blank=False)
     link = models.CharField(max_length=256, null=False, blank=True)
     roles = models.ManyToManyField(Role, through='CompanyRoles')
-
+    category = models.ForeignKey(Category, null=True, blank=True, db_constraint=True, on_delete=models.CASCADE,
+                                 related_name='companies')
     profile = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='companies')
-
     vk = models.CharField(max_length=128, null=True, blank=True)
     facebook = models.CharField(max_length=128, null=True, blank=True)
     twitter = models.CharField(max_length=128, null=True, blank=True)
     website = models.CharField(max_length=128, null=True, blank=True)
     instagram = models.CharField(max_length=128, null=True, blank=True)
-
     url = models.CharField(max_length=128, null=False, blank=True)
     is_external = models.BooleanField(null=False, blank=True, default=False)
 
