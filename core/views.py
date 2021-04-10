@@ -1,16 +1,11 @@
-import base64
-from email.mime.image import MIMEImage
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives, EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import *
+from .utils import get_hh_skills
 
 
 class UniversityListView(APIView):
@@ -44,10 +39,7 @@ class SkillListView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        skills = Skill.objects.all()
-        serializer = SkillSerializer(skills, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'text': get_hh_skills(request.GET.get('text'))}, status=status.HTTP_200_OK)
 
 
 class LandingListView(APIView):
