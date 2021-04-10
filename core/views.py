@@ -60,17 +60,8 @@ class LandingListView(APIView):
             to=[to_email]
         )
 
-        email.content_subtype = 'html'  # set the primary content to be text/html
-        email.mixed_subtype = 'related'  # it is an important part that ensures embedding of an image
-
-        # image_path = settings.STATIC_ROOT + '\\logo.png'
-        # image_name = Path(image_path).name
-        # if all([html_content, image_path, image_name]):
-        #
-        #     with open(image_path, mode='rb') as f:
-        #         image = MIMEImage(f.read())
-        #         email.attach(image)
-        #         image.add_header('Content-ID', f"<{image_name}>")
+        email.content_subtype = 'html'
+        email.mixed_subtype = 'related'
 
         email.send()
 
