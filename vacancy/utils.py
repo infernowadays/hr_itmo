@@ -30,7 +30,7 @@ def filter_by_request_types(list_roles, user):
 
 def filter_by_skills(skill_text):
     if skill_text:
-        skill = Skill.objects.filter(text__contains=skill_text.lower()).values_list('id', flat=True)
+        skill = Skill.objects.filter(text__icontains=skill_text.lower()).values_list('id', flat=True)
         return Q(skills__in=skill)
     else:
         return Q()
