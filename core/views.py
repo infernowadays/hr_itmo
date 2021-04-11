@@ -35,6 +35,15 @@ class CityListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class CategoryListView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class SkillListView(APIView):
     permission_classes = (AllowAny,)
 

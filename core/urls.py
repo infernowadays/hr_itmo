@@ -8,5 +8,6 @@ urlpatterns = [
     path('specializations/', csrf_exempt(views.SpecializationListView.as_view())),
     path('cities/', csrf_exempt(views.CityListView.as_view())),
     path('skills/', csrf_exempt(views.SkillListView.as_view())),
+    path('categories/', csrf_exempt(views.CategoryListView.as_view())),
     path('landing/', csrf_exempt(views.LandingListView.as_view())),
 ]

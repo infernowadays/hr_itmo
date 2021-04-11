@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from core.serializers import CitySerializer
+from core.serializers import CitySerializer, CategorySerializer
 from token_auth.serializers import UserProfileSerializer
 from .models import *
 from .utils import create_company_roles
@@ -10,12 +10,6 @@ from .utils import create_company_roles
 class RoleSerializer(ModelSerializer):
     class Meta:
         model = Role
-        fields = '__all__'
-
-
-class CategorySerializer(ModelSerializer):
-    class Meta:
-        model = Category
         fields = '__all__'
 
 

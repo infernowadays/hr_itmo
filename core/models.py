@@ -11,6 +11,13 @@ class University(models.Model):
         db_table = 'university'
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=256, null=False, blank=False)
+
+    class Meta:
+        db_table = 'category'
+
+
 class Specialization(models.Model):
     code = models.CharField(max_length=64, null=False, blank=False)
     name = models.CharField(max_length=128, null=False, blank=False)

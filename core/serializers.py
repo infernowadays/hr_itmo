@@ -9,6 +9,12 @@ class UniversitySerializer(ModelSerializer):
         fields = '__all__'
 
 
+class CategorySerializer(ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+
 class SpecializationSerializer(ModelSerializer):
     class Meta:
         model = Specialization

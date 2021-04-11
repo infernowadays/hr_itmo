@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.models import City
+from core.models import City, Category
 from token_auth.models import UserProfile
 
 
@@ -12,13 +12,6 @@ class Role(models.Model):
 
     class Meta:
         db_table = 'role'
-
-
-class Category(models.Model):
-    name = models.CharField(max_length=256, null=False, blank=False)
-
-    class Meta:
-        db_table = 'category'
 
 
 class Company(models.Model):
