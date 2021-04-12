@@ -10,7 +10,7 @@ from .enums import *
 class Vacancy(models.Model):
     name = models.CharField(max_length=128, null=False, blank=False)
     description = models.TextField(null=False, blank=False)
-    short_description = models.TextField(null=False, blank=False, )
+    short_description = models.TextField(null=True, blank=True)
     schedule_type = models.IntegerField(null=False, blank=False)
     experience_type = models.IntegerField(null=False, blank=False)
     employment_type = models.IntegerField(null=False, blank=False)
