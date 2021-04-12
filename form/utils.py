@@ -25,10 +25,10 @@ def create_form_jobs(form, jobs):
 def create_form_skills(form, skills):
     FormSkills.objects.filter(form_id=form.id).delete()
     for skill_text in skills:
-        skill = Skill.objects.filter(text=skill_text.get('text'))
+        skill = Skill.objects.filter(text=skill_text)
 
         if not skill:
-            skill_text = Skill.objects.create(id=skill_text.get('id'), text=skill_text.get('text'))
+            skill_text = Skill.objects.create(text=skill_text)
         else:
             skill_text = skill.get()
 

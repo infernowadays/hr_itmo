@@ -88,10 +88,10 @@ def setup_single_vacancy_display(vacancy):
 def create_vacancy_skills(vacancy, skills):
     VacancySkills.objects.filter(vacancy_id=vacancy.id).delete()
     for string_skill in skills:
-        skill = Skill.objects.filter(text=string_skill.get('text'))
+        skill = Skill.objects.filter(text=string_skill)
 
         if not skill:
-            skill = Skill.objects.create(text=string_skill.get('text'))
+            skill = Skill.objects.create(text=string_skill)
         else:
             skill = skill.get()
 

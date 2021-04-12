@@ -28,6 +28,9 @@ class CitySerializer(ModelSerializer):
 
 
 class SkillSerializer(ModelSerializer):
+    def to_representation(self, skill):
+        return skill.text
+
     class Meta:
         model = Skill
         fields = '__all__'
