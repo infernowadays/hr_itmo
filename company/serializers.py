@@ -16,7 +16,8 @@ class RoleSerializer(ModelSerializer):
 class CompanySerializer(ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
     roles = RoleSerializer(many=True)
-    category = CategorySerializer(read_only=True)
+    category = serializers.CharField(source='category.name')
+
     city = CitySerializer(read_only=True)
 
     def create(self, validated_data):
