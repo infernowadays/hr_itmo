@@ -11,10 +11,15 @@ def handle_serializer_errors(model, errors):
     empty = True
     for error in errors:
         for field in model._meta.fields:
+            if field.attname == 'category_id':
+                field.attname = 'category'
             if error == field.attname:
                 if empty is False:
                     error_message += ", "
-                error_message += errors.get(field.attname)[0]
+                if field.attname == 'category':
+                    error_message += 'отрасль'
+                else:
+                    error_message += errors.get(field.attname)[0]
                 empty = False
     return error_message
 
