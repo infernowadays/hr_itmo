@@ -25,8 +25,8 @@ def get_hh_skills(text):
     json_response = response.content.decode('utf8').replace("'", '"')
     items = json.loads(json_response).get('items')
     if items is not None and len(items) > 0:
-        return items[0].get('text')
-    return ''
+        return [x['text'] for x in items][:10]
+    return []
 
 
 def get_city(city_request):

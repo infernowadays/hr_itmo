@@ -48,7 +48,10 @@ class SkillListView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        return Response({'text': get_hh_skills(request.GET.get('text'))}, status=status.HTTP_200_OK)
+        skill_text = request.GET.get('text')
+        skills = list(Skill.objects.filter(text__icontains=skill_text.lower()).values_list('text', flat=True))
+        external_skills = get_hh_skills(skill_text)
+        return Response(set((skills + external_skills)[:10]), status=status.HTTP_200_OK)
 
 
 class LandingListView(APIView):
