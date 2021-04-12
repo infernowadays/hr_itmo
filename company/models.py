@@ -22,11 +22,10 @@ class Company(models.Model):
     city = models.ForeignKey(City, null=True, blank=True, db_constraint=True, on_delete=models.CASCADE,
                              related_name='companies')
 
-    subject = models.TextField(null=False, blank=False)
     state = models.TextField(null=False, blank=False)
     link = models.CharField(max_length=256, null=False, blank=True)
     roles = models.ManyToManyField(Role, through='CompanyRoles')
-    category = models.ForeignKey(Category, null=True, blank=True, db_constraint=True, on_delete=models.CASCADE,
+    category = models.ForeignKey(Category, null=False, blank=False, db_constraint=True, on_delete=models.CASCADE,
                                  related_name='companies')
     profile = models.ForeignKey(UserProfile, null=False, db_constraint=True, on_delete=models.CASCADE,
                                 related_name='companies')

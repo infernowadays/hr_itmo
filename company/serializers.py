@@ -58,7 +58,7 @@ class CompanySerializer(ModelSerializer):
         extra_kwargs = {
             "name": {"error_messages": {"required": "название", "null": "название"}},
             "description": {"error_messages": {"required": "описание", "null": "описание"}},
-            "subject": {"error_messages": {"required": "отрасль", "null": "отрасль"}},
+            "category": {"error_messages": {"required": "категория", "null": "категория"}},
             "state": {"error_messages": {"required": "стадия", "null": "стадия"}},
         }
 

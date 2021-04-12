@@ -40,8 +40,8 @@ def get_city(city_request):
 
 def get_category(category_request):
     if category_request:
-        category = Category.objects.filter(id=category_request)
+        category = Category.objects.filter(name=category_request)
         if len(category) > 0:
             return category[0]
         else:
-            return None
+            return Category.objects.create(name=category_request)
