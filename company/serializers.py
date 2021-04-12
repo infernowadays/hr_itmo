@@ -39,7 +39,6 @@ class CompanySerializer(ModelSerializer):
         instance.logo = validated_data.get('logo', instance.logo)
         instance.city = validated_data.get('city', instance.city)
         instance.category = validated_data.get('category', instance.category)
-        instance.subject = validated_data.get('subject', instance.subject)
         instance.state = validated_data.get('state', instance.state)
         instance.link = validated_data.get('link', instance.link)
 
