@@ -29,6 +29,11 @@ class VacancyListView(APIView):
         if request.GET.get('offset'):
             offset = request.GET.get('offset')
 
+        if request.GET.get('is_external') and request.GET.get('is_external') == 'true':
+            q = q & Q(is_external=True)
+        else:
+            q = q & Q(is_external=False)
+
         if request.GET.get('company'):
             company = Company.objects.filter(pk=request.GET.get('company'))
         else:
